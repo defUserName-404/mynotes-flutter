@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:getwidget/components/loader/gf_loader.dart';
 import 'package:mynotes/views/login_view.dart';
+import 'package:mynotes/views/verify_email_view.dart';
 
 import '../firebase_options.dart';
 
@@ -27,13 +29,37 @@ class HomePage extends StatelessWidget {
               case ConnectionState.done:
                 final loggedInUser = FirebaseAuth.instance.currentUser;
                 if (loggedInUser == null) {
-                  return const LoginView();
-                  // print("Hello");
+                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginView()),
+                    );
+                  });
                 } else {
                   print(loggedInUser);
-                  FirebaseAuth.instance.signOut();
                 }
-                return const Text("done");
+                if (loggedInUser!.emailVerified) {
+                  print("Email verified");
+                } else {
+                  print("Email Not verified");
+                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const VerifyEmailView(),
+                    ));
+                  });
+                }
+                return Column(
+                  children: [
+                    const Text("done"),
+                    ElevatedButton(
+                      onPressed: () async {
+                        FirebaseAuth.instance.signOut();
+                      },
+                      child: const Text("Logout"),
+                    ),
+                  ],
+                );
               default:
                 return const Loader(
                   radius: 10,

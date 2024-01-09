@@ -12,6 +12,13 @@ class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
 
+  Future<void> _handleRegistration() async {
+    final email = _email.text;
+    final password = _password.text;
+    await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: email, password: password);
+  }
+
   @override
   void initState() {
     _email = TextEditingController();
@@ -56,10 +63,7 @@ class _RegisterViewState extends State<RegisterView> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  final email = _email.text;
-                  final password = _password.text;
-                  await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                      email: email, password: password);
+                  _handleRegistration();
                 },
                 child: const Text("Register"),
               ),

@@ -18,6 +18,8 @@ class MyNotesApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const HomePage(),
+      // initialRoute: "/",
+      // routes: {},
     );
   }
 }
