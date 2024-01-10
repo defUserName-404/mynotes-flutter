@@ -37,17 +37,17 @@ class HomePage extends StatelessWidget {
                     );
                   });
                 } else {
+                  if (loggedInUser.emailVerified) {
+                    print("Email verified");
+                  } else {
+                    print("Email Not verified");
+                    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const VerifyEmailView(),
+                      ));
+                    });
+                  }
                   print(loggedInUser);
-                }
-                if (loggedInUser!.emailVerified) {
-                  print("Email verified");
-                } else {
-                  print("Email Not verified");
-                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const VerifyEmailView(),
-                    ));
-                  });
                 }
                 return Column(
                   children: [

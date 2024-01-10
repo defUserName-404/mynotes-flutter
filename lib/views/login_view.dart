@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:getwidget/getwidget.dart';
 import 'package:mynotes/views/register_view.dart';
 
 class LoginView extends StatefulWidget {
@@ -13,6 +14,7 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  late bool _isPasswordVisible;
 
   Future<void> _handleLogin() async {
     final email = _email.text;
@@ -25,6 +27,7 @@ class _LoginViewState extends State<LoginView> {
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
+    _isPasswordVisible = false;
     super.initState();
   }
 
@@ -50,26 +53,60 @@ class _LoginViewState extends State<LoginView> {
           child: Column(
             children: [
               TextField(
-                controller: _email,
-                keyboardType: TextInputType.emailAddress,
-                decoration:
-                    const InputDecoration(hintText: "Enter your email here"),
-              ),
+                  controller: _email,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    hintText: "Enter your email here",
+                    labelText: "Email",
+                    floatingLabelAlignment: FloatingLabelAlignment.center,
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    ),
+                    prefixIcon: Icon(
+                      Icons.email_rounded,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                  )),
               TextField(
                 controller: _password,
-                decoration:
-                    const InputDecoration(hintText: "Enter your password here"),
-                obscureText: true,
+                decoration: InputDecoration(
+                  hintText: "Enter your password here",
+                  labelText: "Password",
+                  floatingLabelAlignment: FloatingLabelAlignment.center,
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  ),
+                  prefixIcon: Icon(
+                    Icons.lock,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                  suffixIcon: IconButton(
+                      icon: Icon(_isPasswordVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      }),
+                ),
+                obscureText: !_isPasswordVisible,
                 enableSuggestions: false,
                 autocorrect: false,
               ),
-              ElevatedButton(
+              GFButton(
+                text: "Login",
+                icon: const Icon(Icons.directions),
                 onPressed: () async {
                   _handleLogin();
                 },
-                child: const Text("Login"),
+                type: GFButtonType.outline2x,
+                color: Theme.of(context).buttonTheme.colorScheme!.primary,
+                size: GFSize.LARGE,
               ),
-              ElevatedButton(
+              GFButton(
+                text: "Don't have an account? Register",
+                icon: const Icon(Icons.account_circle),
                 onPressed: () {
                   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
                     Navigator.of(context).push(MaterialPageRoute(
@@ -77,7 +114,9 @@ class _LoginViewState extends State<LoginView> {
                     ));
                   });
                 },
-                child: const Text("Don't have an account? Register"),
+                type: GFButtonType.outline2x,
+                color: Theme.of(context).buttonTheme.colorScheme!.primary,
+                size: GFSize.LARGE,
               ),
             ],
           ),

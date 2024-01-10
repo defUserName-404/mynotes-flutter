@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:mynotes/pages/home_page.dart";
+import "package:mynotes/util/theme/app_theme.dart";
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,14 +13,11 @@ class MyNotesApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Flutter Demo",
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        useMaterial3: true,
-      ),
+      title: "MyNotes",
+      themeMode: ThemeMode.system,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       home: const HomePage(),
-      // initialRoute: "/",
-      // routes: {},
     );
   }
 }
