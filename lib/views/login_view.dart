@@ -81,9 +81,11 @@ class _LoginViewState extends State<LoginView> {
                     color: Theme.of(context).iconTheme.color,
                   ),
                   suffixIcon: IconButton(
-                      icon: Icon(_isPasswordVisible
-                          ? Icons.visibility_off
-                          : Icons.visibility),
+                      icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: Theme.of(context).iconTheme.color),
                       onPressed: () {
                         setState(() {
                           _isPasswordVisible = !_isPasswordVisible;
