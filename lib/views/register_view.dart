@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/size/gf_size.dart';
 import 'package:getwidget/types/gf_button_type.dart';
@@ -81,9 +82,12 @@ class _RegisterViewState extends State<RegisterView> {
                     color: Theme.of(context).iconTheme.color,
                   ),
                   suffixIcon: IconButton(
-                      icon: Icon(_isPasswordVisible
-                          ? Icons.visibility_off
-                          : Icons.visibility),
+                      icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
                       onPressed: () {
                         setState(() {
                           _isPasswordVisible = !_isPasswordVisible;
@@ -99,6 +103,19 @@ class _RegisterViewState extends State<RegisterView> {
                 icon: const Icon(Icons.directions),
                 onPressed: () async {
                   _handleRegistration();
+                },
+                type: GFButtonType.outline2x,
+                color: Theme.of(context).buttonTheme.colorScheme!.primary,
+                size: GFSize.LARGE,
+              ),
+              GFButton(
+                text: "Already registered? Login here!",
+                icon: const Icon(Icons.account_circle),
+                onPressed: () {
+                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil("/login", (route) => false);
+                  });
                 },
                 type: GFButtonType.outline2x,
                 color: Theme.of(context).buttonTheme.colorScheme!.primary,

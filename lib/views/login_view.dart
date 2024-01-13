@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:getwidget/getwidget.dart';
-import 'package:mynotes/views/register_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -107,13 +106,12 @@ class _LoginViewState extends State<LoginView> {
                 size: GFSize.LARGE,
               ),
               GFButton(
-                text: "Don't have an account? Register",
+                text: "Don't have an account? Register here!",
                 icon: const Icon(Icons.account_circle),
                 onPressed: () {
                   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const RegisterView(),
-                    ));
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil("/register", (route) => false);
                   });
                 },
                 type: GFButtonType.outline2x,

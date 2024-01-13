@@ -2,9 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/components/loader/gf_loader.dart';
-import 'package:mynotes/views/login_view.dart';
-import 'package:mynotes/views/verify_email_view.dart';
+import 'package:getwidget/size/gf_size.dart';
+import 'package:getwidget/types/gf_button_type.dart';
 
 import '../firebase_options.dart';
 
@@ -30,11 +31,10 @@ class HomePage extends StatelessWidget {
                 final loggedInUser = FirebaseAuth.instance.currentUser;
                 if (loggedInUser == null) {
                   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginView()),
-                    );
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil("/login", (route) => false);
+                    // Navigator.of(context).pushNamedAndRemoveUntil(
+                    //     "/verify-email", (route) => false);
                   });
                 } else {
                   if (loggedInUser.emailVerified) {
@@ -42,9 +42,8 @@ class HomePage extends StatelessWidget {
                   } else {
                     print("Email Not verified");
                     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const VerifyEmailView(),
-                      ));
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          "/verify-email", (route) => false);
                     });
                   }
                   print(loggedInUser);
@@ -52,11 +51,15 @@ class HomePage extends StatelessWidget {
                 return Column(
                   children: [
                     const Text("done"),
-                    ElevatedButton(
+                    GFButton(
+                      text: "Logout",
+                      icon: const Icon(Icons.outbond),
                       onPressed: () async {
                         FirebaseAuth.instance.signOut();
                       },
-                      child: const Text("Logout"),
+                      type: GFButtonType.outline2x,
+                      color: Theme.of(context).buttonTheme.colorScheme!.primary,
+                      size: GFSize.LARGE,
                     ),
                   ],
                 );
