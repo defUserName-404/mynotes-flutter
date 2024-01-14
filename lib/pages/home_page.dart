@@ -1,11 +1,10 @@
+import 'dart:developer' as devtools show log;
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/components/loader/gf_loader.dart';
-import 'package:getwidget/size/gf_size.dart';
-import 'package:getwidget/types/gf_button_type.dart';
 
 import '../firebase_options.dart';
 
@@ -15,13 +14,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "My Notes",
-          style: Theme.of(context).textTheme.headlineLarge,
-        ),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
+      appBar: AppBar(),
       body: FutureBuilder(
           future: Firebase.initializeApp(
               options: DefaultFirebaseOptions.currentPlatform),
@@ -37,32 +30,21 @@ class HomePage extends StatelessWidget {
                     //     "/verify-email", (route) => false);
                   });
                 } else {
+                  devtools.log("Hello");
                   if (loggedInUser.emailVerified) {
-                    print("Email verified");
+                    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil("/notes", (route) => false);
+                    });
                   } else {
-                    print("Email Not verified");
                     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
                       Navigator.of(context).pushNamedAndRemoveUntil(
                           "/verify-email", (route) => false);
                     });
                   }
-                  print(loggedInUser);
+                  // print(loggedInUser);
                 }
-                return Column(
-                  children: [
-                    const Text("done"),
-                    GFButton(
-                      text: "Logout",
-                      icon: const Icon(Icons.outbond),
-                      onPressed: () async {
-                        FirebaseAuth.instance.signOut();
-                      },
-                      type: GFButtonType.outline2x,
-                      color: Theme.of(context).buttonTheme.colorScheme!.primary,
-                      size: GFSize.LARGE,
-                    ),
-                  ],
-                );
+                return const Column();
               default:
                 return const Loader(
                   radius: 10,

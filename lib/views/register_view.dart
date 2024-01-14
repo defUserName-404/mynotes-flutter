@@ -1,3 +1,5 @@
+import 'dart:developer' as devtools show log;
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -20,8 +22,21 @@ class _RegisterViewState extends State<RegisterView> {
   Future<void> _handleRegistration() async {
     final email = _email.text;
     final password = _password.text;
-    await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: password);
+    try {
+      final userCredentials = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+      devtools.log(userCredentials.toString());
+      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil("/notes", (route) => false);
+      });
+    } on FirebaseAuthException catch (error) {
+      if (error.code == "wrong-password") {
+        devtools.log("Wrong password");
+      } else if (error.code == "email-already-in-use") {
+        devtools.log("Email already in use, try logging in instead");
+      }
+    }
   }
 
   @override

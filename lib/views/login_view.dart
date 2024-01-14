@@ -1,3 +1,5 @@
+import 'dart:developer' as devtools show log;
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -18,8 +20,21 @@ class _LoginViewState extends State<LoginView> {
   Future<void> _handleLogin() async {
     final email = _email.text;
     final password = _password.text;
-    await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password);
+    try {
+      final userCredentials = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      devtools.log(userCredentials.toString());
+      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil("/notes", (route) => false);
+      });
+    } on FirebaseAuthException catch (error) {
+      if (error.code == "wrong-password") {
+        devtools.log("Wrong password");
+      } else if (error.code == "invalid-email") {
+        devtools.log("Invalid email");
+      }
+    }
   }
 
   @override
