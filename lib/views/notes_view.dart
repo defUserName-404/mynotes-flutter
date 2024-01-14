@@ -5,6 +5,8 @@ import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/size/gf_size.dart';
 import 'package:getwidget/types/gf_button_type.dart';
 
+import '../custom_widgets/reused_widgets.dart';
+
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
 
@@ -15,6 +17,9 @@ class NotesView extends StatefulWidget {
 class _NotesViewState extends State<NotesView> {
   @override
   Widget build(BuildContext context) {
+    final backgroundColor = Theme.of(context).buttonTheme.colorScheme!.primary;
+    final textColor = Theme.of(context).buttonTheme.colorScheme!.onPrimary;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -29,10 +34,14 @@ class _NotesViewState extends State<NotesView> {
               final signOut = await showLogOutDialog(context);
               if (signOut) {
                 await FirebaseAuth.instance.signOut();
+                showToast(
+                    "Successfully logged out", backgroundColor, textColor);
                 SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
                   Navigator.of(context)
                       .pushNamedAndRemoveUntil("/login", (route) => false);
                 });
+              } else {
+                showToast("Log out cancelled", backgroundColor, textColor);
               }
             },
           ),

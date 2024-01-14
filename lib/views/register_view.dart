@@ -7,6 +7,8 @@ import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/size/gf_size.dart';
 import 'package:getwidget/types/gf_button_type.dart';
 
+import '../custom_widgets/reused_widgets.dart';
+
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
 
@@ -22,10 +24,13 @@ class _RegisterViewState extends State<RegisterView> {
   Future<void> _handleRegistration() async {
     final email = _email.text;
     final password = _password.text;
+    final backgroundColor = Theme.of(context).buttonTheme.colorScheme!.primary;
+    final textColor = Theme.of(context).buttonTheme.colorScheme!.onPrimary;
     try {
       final userCredentials = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
       devtools.log(userCredentials.toString());
+      showToast("Successfully registered", backgroundColor, textColor);
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         Navigator.of(context)
             .pushNamedAndRemoveUntil("/notes", (route) => false);
@@ -36,6 +41,7 @@ class _RegisterViewState extends State<RegisterView> {
       } else if (error.code == "email-already-in-use") {
         devtools.log("Email already in use, try logging in instead");
       }
+      showToast("Failed to create account", backgroundColor, textColor);
     }
   }
 

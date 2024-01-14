@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:mynotes/custom_widgets/reused_widgets.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -20,6 +21,8 @@ class _LoginViewState extends State<LoginView> {
   Future<void> _handleLogin() async {
     final email = _email.text;
     final password = _password.text;
+    final backgroundColor = Theme.of(context).buttonTheme.colorScheme!.primary;
+    final textColor = Theme.of(context).buttonTheme.colorScheme!.onPrimary;
     try {
       final userCredentials = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
@@ -27,6 +30,7 @@ class _LoginViewState extends State<LoginView> {
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         Navigator.of(context)
             .pushNamedAndRemoveUntil("/notes", (route) => false);
+        showToast("Successfully logged in", backgroundColor, textColor);
       });
     } on FirebaseAuthException catch (error) {
       if (error.code == "wrong-password") {
@@ -34,6 +38,7 @@ class _LoginViewState extends State<LoginView> {
       } else if (error.code == "invalid-email") {
         devtools.log("Invalid email");
       }
+      showToast("Failed to log in", backgroundColor, textColor);
     }
   }
 
