@@ -7,6 +7,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:getwidget/components/loader/gf_loader.dart';
 
 import '../firebase_options.dart';
+import '../util/constants/routes.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -25,7 +26,7 @@ class HomePage extends StatelessWidget {
                 if (loggedInUser == null) {
                   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
                     Navigator.of(context)
-                        .pushNamedAndRemoveUntil("/login", (route) => false);
+                        .pushNamedAndRemoveUntil(loginRoute, (route) => false);
                     // Navigator.of(context).pushNamedAndRemoveUntil(
                     //     "/verify-email", (route) => false);
                   });
@@ -33,13 +34,13 @@ class HomePage extends StatelessWidget {
                   devtools.log("Hello");
                   if (loggedInUser.emailVerified) {
                     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil("/notes", (route) => false);
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          notesRoute, (route) => false);
                     });
                   } else {
                     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                          "/verify-email", (route) => false);
+                          verifyEmailRoute, (route) => false);
                     });
                   }
                   // print(loggedInUser);

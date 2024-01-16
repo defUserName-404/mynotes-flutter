@@ -4,6 +4,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/size/gf_size.dart';
 import 'package:getwidget/types/gf_button_type.dart';
+import "package:mynotes/util/constants/routes.dart";
 
 import '../custom_widgets/reused_widgets.dart';
 
@@ -38,7 +39,7 @@ class _NotesViewState extends State<NotesView> {
                     "Successfully logged out", backgroundColor, textColor);
                 SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
                   Navigator.of(context)
-                      .pushNamedAndRemoveUntil("/login", (route) => false);
+                      .pushNamedAndRemoveUntil(loginRoute, (route) => false);
                 });
               } else {
                 showToast("Log out cancelled", backgroundColor, textColor);

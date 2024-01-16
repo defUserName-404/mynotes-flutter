@@ -8,6 +8,7 @@ import 'package:getwidget/size/gf_size.dart';
 import 'package:getwidget/types/gf_button_type.dart';
 
 import '../custom_widgets/reused_widgets.dart';
+import '../util/constants/routes.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -33,7 +34,7 @@ class _RegisterViewState extends State<RegisterView> {
       showToast("Successfully registered", backgroundColor, textColor);
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         Navigator.of(context)
-            .pushNamedAndRemoveUntil("/notes", (route) => false);
+            .pushNamedAndRemoveUntil(notesRoute, (route) => false);
       });
     } on FirebaseAuthException catch (error) {
       if (error.code == "wrong-password") {
@@ -135,7 +136,7 @@ class _RegisterViewState extends State<RegisterView> {
                 onPressed: () {
                   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
                     Navigator.of(context)
-                        .pushNamedAndRemoveUntil("/login", (route) => false);
+                        .pushNamedAndRemoveUntil(loginRoute, (route) => false);
                   });
                 },
                 type: GFButtonType.outline2x,

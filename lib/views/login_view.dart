@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:mynotes/custom_widgets/reused_widgets.dart';
+import 'package:mynotes/util/constants/routes.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -29,7 +30,7 @@ class _LoginViewState extends State<LoginView> {
       devtools.log(userCredentials.toString());
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         Navigator.of(context)
-            .pushNamedAndRemoveUntil("/notes", (route) => false);
+            .pushNamedAndRemoveUntil(notesRoute, (route) => false);
         showToast("Successfully logged in", backgroundColor, textColor);
       });
     } on FirebaseAuthException catch (error) {
@@ -130,8 +131,8 @@ class _LoginViewState extends State<LoginView> {
                 icon: const Icon(Icons.account_circle),
                 onPressed: () {
                   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil("/register", (route) => false);
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        registerRoute, (route) => false);
                   });
                 },
                 type: GFButtonType.outline2x,

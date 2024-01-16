@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:mynotes/pages/home_page.dart";
+import "package:mynotes/util/constants/routes.dart";
 import "package:mynotes/util/theme/app_theme.dart";
 import "package:mynotes/views/login_view.dart";
 import "package:mynotes/views/notes_view.dart";
@@ -23,10 +24,10 @@ class MyNotesApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       home: const HomePage(),
       routes: {
-        "/login": (context) => const LoginView(),
-        "/register": (context) => const RegisterView(),
-        "/verify-email": (context) => const VerifyEmailView(),
-        "/notes": (context) => const NotesView()
+        loginRoute: (context) => const LoginView(),
+        registerRoute: (context) => const RegisterView(),
+        verifyEmailRoute: (context) => const VerifyEmailView(),
+        notesRoute: (context) => const NotesView()
       },
     );
   }
