@@ -1,5 +1,3 @@
-import 'dart:developer' as devtools show log;
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -25,13 +23,12 @@ class HomePage extends StatelessWidget {
                 final loggedInUser = FirebaseAuth.instance.currentUser;
                 if (loggedInUser == null) {
                   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil(loginRoute, (route) => false);
-                    // Navigator.of(context).pushNamedAndRemoveUntil(
-                    //     "/verify-email", (route) => false);
+                    // Navigator.of(context)
+                    //     .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        verifyEmailRoute, (route) => false);
                   });
                 } else {
-                  devtools.log("Hello");
                   if (loggedInUser.emailVerified) {
                     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
                       Navigator.of(context).pushNamedAndRemoveUntil(
@@ -43,7 +40,6 @@ class HomePage extends StatelessWidget {
                           verifyEmailRoute, (route) => false);
                     });
                   }
-                  // print(loggedInUser);
                 }
                 return const Column();
               default:

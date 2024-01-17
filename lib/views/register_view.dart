@@ -37,12 +37,7 @@ class _RegisterViewState extends State<RegisterView> {
             .pushNamedAndRemoveUntil(notesRoute, (route) => false);
       });
     } on FirebaseAuthException catch (error) {
-      if (error.code == "wrong-password") {
-        devtools.log("Wrong password");
-      } else if (error.code == "email-already-in-use") {
-        devtools.log("Email already in use, try logging in instead");
-      }
-      showToast("Failed to create account", backgroundColor, textColor);
+      showToast(error.code, backgroundColor, textColor);
     }
   }
 

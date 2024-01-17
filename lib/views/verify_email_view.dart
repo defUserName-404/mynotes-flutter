@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/size/gf_size.dart';
 import 'package:getwidget/types/gf_button_type.dart';
+
+import '../util/constants/routes.dart';
 
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({super.key});
@@ -34,6 +37,20 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                 onPressed: () async {
                   final user = FirebaseAuth.instance.currentUser;
                   await user?.sendEmailVerification();
+                },
+                type: GFButtonType.outline2x,
+                color: Theme.of(context).buttonTheme.colorScheme!.primary,
+                size: GFSize.LARGE,
+              ),
+              GFButton(
+                text: "Restart",
+                icon: const Icon(Icons.restart_alt),
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+                  });
                 },
                 type: GFButtonType.outline2x,
                 color: Theme.of(context).buttonTheme.colorScheme!.primary,

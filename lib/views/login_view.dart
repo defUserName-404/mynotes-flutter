@@ -34,12 +34,7 @@ class _LoginViewState extends State<LoginView> {
         showToast("Successfully logged in", backgroundColor, textColor);
       });
     } on FirebaseAuthException catch (error) {
-      if (error.code == "wrong-password") {
-        devtools.log("Wrong password");
-      } else if (error.code == "invalid-email") {
-        devtools.log("Invalid email");
-      }
-      showToast("Failed to log in", backgroundColor, textColor);
+      showToast(error.code, backgroundColor, textColor);
     }
   }
 
