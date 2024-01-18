@@ -1,10 +1,11 @@
 import 'dart:developer' as devtools show log;
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:mynotes/custom_widgets/reused_widgets.dart';
+import 'package:mynotes/services/auth/auth_exceptions.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/util/constants/routes.dart';
 
 class LoginView extends StatefulWidget {
@@ -25,16 +26,20 @@ class _LoginViewState extends State<LoginView> {
     final backgroundColor = Theme.of(context).buttonTheme.colorScheme!.primary;
     final textColor = Theme.of(context).buttonTheme.colorScheme!.onPrimary;
     try {
-      final userCredentials = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+      final userCredentials = await AppAuthService.firebase()
+          .login(email: email, password: password);
       devtools.log(userCredentials.toString());
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         Navigator.of(context)
             .pushNamedAndRemoveUntil(notesRoute, (route) => false);
         showToast("Successfully logged in", backgroundColor, textColor);
       });
-    } on FirebaseAuthException catch (error) {
-      showToast(error.code, backgroundColor, textColor);
+    } on UserNotFoundAuthException {
+      showToast("User not found", backgroundColor, textColor);
+    } on WrongPasswordAuthException {
+      showToast("Wrong password entered.", backgroundColor, textColor);
+    } on GenericAuthException {
+      showToast("Authentication error.", backgroundColor, textColor);
     }
   }
 

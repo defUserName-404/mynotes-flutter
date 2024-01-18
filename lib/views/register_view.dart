@@ -1,11 +1,12 @@
 import 'dart:developer' as devtools show log;
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/size/gf_size.dart';
 import 'package:getwidget/types/gf_button_type.dart';
+import 'package:mynotes/services/auth/auth_exceptions.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 
 import '../custom_widgets/reused_widgets.dart';
 import '../util/constants/routes.dart';
@@ -28,16 +29,26 @@ class _RegisterViewState extends State<RegisterView> {
     final backgroundColor = Theme.of(context).buttonTheme.colorScheme!.primary;
     final textColor = Theme.of(context).buttonTheme.colorScheme!.onPrimary;
     try {
-      final userCredentials = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
+      final userCredentials = await AppAuthService.firebase()
+          .register(email: email, password: password);
       devtools.log(userCredentials.toString());
       showToast("Successfully registered", backgroundColor, textColor);
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         Navigator.of(context)
             .pushNamedAndRemoveUntil(notesRoute, (route) => false);
       });
-    } on FirebaseAuthException catch (error) {
-      showToast(error.code, backgroundColor, textColor);
+    } on EmailAlreadyExistsException {
+      showToast(
+          "Already registered with the provided email. Try logging in instead.",
+          backgroundColor,
+          textColor);
+    } on WeakPasswordAuthException {
+      showToast("Weak password provided. Try a stronger one.", backgroundColor,
+          textColor);
+    } on InvalidEmailAuthException {
+      showToast("Invalid email!", backgroundColor, textColor);
+    } on GenericAuthException {
+      showToast("Authentication error.", backgroundColor, textColor);
     }
   }
 

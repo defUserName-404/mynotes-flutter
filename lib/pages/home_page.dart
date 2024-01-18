@@ -1,10 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:getwidget/components/loader/gf_loader.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 
-import '../firebase_options.dart';
 import '../util/constants/routes.dart';
 
 class HomePage extends StatelessWidget {
@@ -15,21 +13,18 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: FutureBuilder(
-          future: Firebase.initializeApp(
-              options: DefaultFirebaseOptions.currentPlatform),
+          future: AppAuthService.firebase().initialize(),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.done:
-                final loggedInUser = FirebaseAuth.instance.currentUser;
+                final loggedInUser = AppAuthService.firebase().currentUser;
                 if (loggedInUser == null) {
                   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    // Navigator.of(context)
-                    //     .pushNamedAndRemoveUntil(loginRoute, (route) => false);
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        verifyEmailRoute, (route) => false);
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil(loginRoute, (route) => false);
                   });
                 } else {
-                  if (loggedInUser.emailVerified) {
+                  if (loggedInUser.isEmailVerified) {
                     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
                       Navigator.of(context).pushNamedAndRemoveUntil(
                           notesRoute, (route) => false);

@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/size/gf_size.dart';
 import 'package:getwidget/types/gf_button_type.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 
 import '../util/constants/routes.dart';
 
@@ -35,8 +35,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                 text: "Send Email Verification",
                 icon: const Icon(Icons.notification_add),
                 onPressed: () async {
-                  final user = FirebaseAuth.instance.currentUser;
-                  await user?.sendEmailVerification();
+                  await AppAuthService.firebase().sendEmailVerification();
                 },
                 type: GFButtonType.outline2x,
                 color: Theme.of(context).buttonTheme.colorScheme!.primary,
@@ -46,7 +45,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                 text: "Restart",
                 icon: const Icon(Icons.restart_alt),
                 onPressed: () async {
-                  await FirebaseAuth.instance.signOut();
+                  await AppAuthService.firebase().logout();
                   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
                     Navigator.of(context)
                         .pushNamedAndRemoveUntil(loginRoute, (route) => false);

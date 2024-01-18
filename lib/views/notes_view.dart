@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/size/gf_size.dart';
 import 'package:getwidget/types/gf_button_type.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 import "package:mynotes/util/constants/routes.dart";
 
 import '../custom_widgets/reused_widgets.dart';
@@ -34,7 +34,7 @@ class _NotesViewState extends State<NotesView> {
             onPressed: () async {
               final signOut = await showLogOutDialog(context);
               if (signOut) {
-                await FirebaseAuth.instance.signOut();
+                await AppAuthService.firebase().logout();
                 showToast(
                     "Successfully logged out", backgroundColor, textColor);
                 SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
@@ -60,7 +60,7 @@ class _NotesViewState extends State<NotesView> {
             content: const Text("Are you sure you want to sign out?"),
             actions: [
               GFButton(
-                text: "Yes, log out",
+                text: "Yes, sign out",
                 icon: const Icon(Icons.outbond),
                 onPressed: () {
                   Navigator.of(context).pop(true);
