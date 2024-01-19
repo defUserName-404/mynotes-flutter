@@ -2,11 +2,13 @@ import 'dart:developer' as devtools show log;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:mynotes/custom_widgets/reused_widgets.dart';
+import 'package:mynotes/custom_widgets/textfield.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/util/constants/routes.dart';
+
+import '../custom_widgets/button.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -72,73 +74,48 @@ class _LoginViewState extends State<LoginView> {
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
           child: Column(
             children: [
-              TextField(
-                  controller: _email,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    hintText: "Enter your email here",
-                    labelText: "Email",
-                    floatingLabelAlignment: FloatingLabelAlignment.center,
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    ),
-                    prefixIcon: Icon(
-                      Icons.email_rounded,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                  )),
-              TextField(
+              AppTextField(
+                controller: _email,
+                keyboardType: TextInputType.emailAddress,
+                hintText: "Enter your email here",
+                labelText: "Email",
+                prefixIcon: const Icon(Icons.email_rounded),
+              ),
+              AppTextField(
                 controller: _password,
-                decoration: InputDecoration(
-                  hintText: "Enter your password here",
-                  labelText: "Password",
-                  floatingLabelAlignment: FloatingLabelAlignment.center,
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                  ),
-                  prefixIcon: Icon(
-                    Icons.lock,
-                    color: Theme.of(context).iconTheme.color,
-                  ),
-                  suffixIcon: IconButton(
-                      icon: Icon(
-                          _isPasswordVisible
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                          color: Theme.of(context).iconTheme.color),
-                      onPressed: () {
-                        setState(() {
-                          _isPasswordVisible = !_isPasswordVisible;
-                        });
-                      }),
-                ),
+                hintText: "Enter your password here",
+                labelText: "Password",
+                prefixIcon: const Icon(Icons.lock),
+                suffixIcon: IconButton(
+                    icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Theme.of(context).iconTheme.color),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    }),
                 obscureText: !_isPasswordVisible,
                 enableSuggestions: false,
-                autocorrect: false,
+                autoCorrect: false,
               ),
-              GFButton(
-                text: "Login",
-                icon: const Icon(Icons.directions),
-                onPressed: () async {
-                  _handleLogin();
-                },
-                type: GFButtonType.outline2x,
-                color: Theme.of(context).buttonTheme.colorScheme!.primary,
-                size: GFSize.LARGE,
-              ),
-              GFButton(
-                text: "Don't have an account? Register here!",
-                icon: const Icon(Icons.account_circle),
-                onPressed: () {
-                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        registerRoute, (route) => false);
-                  });
-                },
-                type: GFButtonType.outline2x,
-                color: Theme.of(context).buttonTheme.colorScheme!.primary,
-                size: GFSize.LARGE,
-              ),
+              AppButton(
+                  text: "Login",
+                  icon: const Icon(Icons.directions),
+                  onPressed: () async {
+                    _handleLogin();
+                  }),
+              AppButton(
+                  text: "Don't have an account? Register here!",
+                  icon: const Icon(Icons.account_circle),
+                  onPressed: () {
+                    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          registerRoute, (route) => false);
+                    });
+                  }),
             ],
           ),
         ));

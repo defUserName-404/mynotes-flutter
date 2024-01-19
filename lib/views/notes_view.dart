@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:getwidget/components/button/gf_button.dart';
-import 'package:getwidget/size/gf_size.dart';
-import 'package:getwidget/types/gf_button_type.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import "package:mynotes/util/constants/routes.dart";
 
+import '../custom_widgets/button.dart';
 import '../custom_widgets/reused_widgets.dart';
 
 class NotesView extends StatefulWidget {
@@ -59,26 +57,18 @@ class _NotesViewState extends State<NotesView> {
             title: const Text("Sign out"),
             content: const Text("Are you sure you want to sign out?"),
             actions: [
-              GFButton(
-                text: "Yes, sign out",
-                icon: const Icon(Icons.outbond),
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-                type: GFButtonType.outline2x,
-                color: Theme.of(context).buttonTheme.colorScheme!.primary,
-                size: GFSize.LARGE,
-              ),
-              GFButton(
-                text: "Cancel",
-                icon: const Icon(Icons.outbond),
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-                type: GFButtonType.outline2x,
-                color: Theme.of(context).buttonTheme.colorScheme!.primary,
-                size: GFSize.LARGE,
-              ),
+              AppButton(
+                  text: "Yes, sign out",
+                  icon: const Icon(Icons.outbond),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  }),
+              AppButton(
+                  text: "Cancel",
+                  icon: const Icon(Icons.outbond),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  }),
             ],
           );
         }).then((value) => value ?? false);
