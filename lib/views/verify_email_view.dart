@@ -18,7 +18,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            "Verify Email",
+            'Verify Email',
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -28,15 +28,15 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
           alignment: Alignment.center,
           child: Column(
             children: [
-              const Text("Please verify your email address"),
+              const Text('Please verify your email address'),
               AppButton(
-                  text: "Send Email Verification",
+                  text: 'Send Email Verification',
                   icon: const Icon(Icons.notification_add),
                   onPressed: () async {
                     await AppAuthService.firebase().sendEmailVerification();
                   }),
               AppButton(
-                  text: "Restart",
+                  text: 'Restart',
                   icon: const Icon(Icons.restart_alt),
                   onPressed: () async {
                     await AppAuthService.firebase().logout();

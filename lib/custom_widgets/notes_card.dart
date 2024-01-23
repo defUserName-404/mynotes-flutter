@@ -1,5 +1,5 @@
-import "package:flutter/material.dart";
-import "package:fluttertoast/fluttertoast.dart";
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class NotesCard extends StatefulWidget {
   final String title;
@@ -36,11 +36,11 @@ class _NotesCardState extends State<NotesCard> {
       _isFavoriteSelected = !_isFavoriteSelected;
     });
 
-    Fluttertoast.showToast(msg: "Like pressed", backgroundColor: widget.color);
+    Fluttertoast.showToast(msg: 'Like pressed', backgroundColor: widget.color);
   }
 
   void _onEditPressed() {
-    Fluttertoast.showToast(msg: "Edit pressed", backgroundColor: widget.color);
+    Fluttertoast.showToast(msg: 'Edit pressed', backgroundColor: widget.color);
   }
 
   @override

@@ -34,14 +34,14 @@ class _LoginViewState extends State<LoginView> {
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         Navigator.of(context)
             .pushNamedAndRemoveUntil(notesRoute, (route) => false);
-        showToast("Successfully logged in", backgroundColor, textColor);
+        showToast('Successfully logged in', backgroundColor, textColor);
       });
     } on UserNotFoundAuthException {
-      showToast("User not found", backgroundColor, textColor);
+      showToast('User not found', backgroundColor, textColor);
     } on WrongPasswordAuthException {
-      showToast("Wrong password entered.", backgroundColor, textColor);
+      showToast('Wrong password entered.', backgroundColor, textColor);
     } on GenericAuthException {
-      showToast("Authentication error.", backgroundColor, textColor);
+      showToast('Authentication error.', backgroundColor, textColor);
     }
   }
 
@@ -65,7 +65,7 @@ class _LoginViewState extends State<LoginView> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            "Login",
+            'Login',
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -77,14 +77,14 @@ class _LoginViewState extends State<LoginView> {
               AppTextField(
                 controller: _email,
                 keyboardType: TextInputType.emailAddress,
-                hintText: "Enter your email here",
-                labelText: "Email",
+                hintText: 'Enter your email here',
+                labelText: 'Email',
                 prefixIcon: const Icon(Icons.email_rounded),
               ),
               AppTextField(
                 controller: _password,
-                hintText: "Enter your password here",
-                labelText: "Password",
+                hintText: 'Enter your password here',
+                labelText: 'Password',
                 prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
                     icon: Icon(
@@ -102,13 +102,13 @@ class _LoginViewState extends State<LoginView> {
                 autoCorrect: false,
               ),
               AppButton(
-                  text: "Login",
+                  text: 'Login',
                   icon: const Icon(Icons.directions),
                   onPressed: () async {
                     _handleLogin();
                   }),
               AppButton(
-                  text: "Don't have an account? Register here!",
+                  text: 'Don\'t have an account? Register here!',
                   icon: const Icon(Icons.account_circle),
                   onPressed: () {
                     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {

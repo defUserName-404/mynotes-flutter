@@ -31,23 +31,23 @@ class _RegisterViewState extends State<RegisterView> {
       final userCredentials = await AppAuthService.firebase()
           .register(email: email, password: password);
       devtools.log(userCredentials.toString());
-      showToast("Successfully registered", backgroundColor, textColor);
+      showToast('Successfully registered', backgroundColor, textColor);
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         Navigator.of(context)
             .pushNamedAndRemoveUntil(notesRoute, (route) => false);
       });
     } on EmailAlreadyExistsException {
       showToast(
-          "Already registered with the provided email. Try logging in instead.",
+          'Already registered with the provided email. Try logging in instead.',
           backgroundColor,
           textColor);
     } on WeakPasswordAuthException {
-      showToast("Weak password provided. Try a stronger one.", backgroundColor,
+      showToast('Weak password provided. Try a stronger one.', backgroundColor,
           textColor);
     } on InvalidEmailAuthException {
-      showToast("Invalid email!", backgroundColor, textColor);
+      showToast('Invalid email!', backgroundColor, textColor);
     } on GenericAuthException {
-      showToast("Authentication error.", backgroundColor, textColor);
+      showToast('Authentication error.', backgroundColor, textColor);
     }
   }
 
@@ -71,7 +71,7 @@ class _RegisterViewState extends State<RegisterView> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            "Register",
+            'Register',
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -83,14 +83,14 @@ class _RegisterViewState extends State<RegisterView> {
               AppTextField(
                 controller: _email,
                 keyboardType: TextInputType.emailAddress,
-                hintText: "Enter your email here",
-                labelText: "Email",
+                hintText: 'Enter your email here',
+                labelText: 'Email',
                 prefixIcon: const Icon(Icons.email_rounded),
               ),
               AppTextField(
                 controller: _password,
-                hintText: "Enter your password here",
-                labelText: "Password",
+                hintText: 'Enter your password here',
+                labelText: 'Password',
                 prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
                     icon: Icon(
@@ -108,13 +108,13 @@ class _RegisterViewState extends State<RegisterView> {
                 autoCorrect: false,
               ),
               AppButton(
-                  text: "Register",
+                  text: 'Register',
                   icon: const Icon(Icons.directions),
                   onPressed: () async {
                     _handleRegistration();
                   }),
               AppButton(
-                  text: "Already registered? Login here!",
+                  text: 'Already registered? Login here!',
                   icon: const Icon(Icons.account_circle),
                   onPressed: () {
                     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {

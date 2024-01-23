@@ -36,9 +36,9 @@ class FirebaseAppAuthProvider implements AppAuthProvider {
         throw UserNotLoggedInAuthException();
       }
     } on FirebaseAuthException catch (error) {
-      if (error.code == "user-not-found") {
+      if (error.code == 'user-not-found') {
         throw UserNotFoundAuthException();
-      } else if (error.code == "wrong-password") {
+      } else if (error.code == 'wrong-password') {
         throw WrongPasswordAuthException();
       } else {
         throw GenericAuthException();
@@ -71,11 +71,11 @@ class FirebaseAppAuthProvider implements AppAuthProvider {
         throw UserNotLoggedInAuthException();
       }
     } on FirebaseAuthException catch (error) {
-      if (error.code == "weak-password") {
+      if (error.code == 'weak-password') {
         throw WeakPasswordAuthException();
-      } else if (error.code == "email-already-in-use") {
+      } else if (error.code == 'email-already-in-use') {
         throw EmailAlreadyExistsException();
-      } else if (error.code == "invalid-email") {
+      } else if (error.code == 'invalid-email') {
         throw InvalidEmailAuthException();
       } else {
         throw GenericAuthException();

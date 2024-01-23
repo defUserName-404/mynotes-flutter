@@ -1,11 +1,11 @@
-import "package:flutter/material.dart";
-import "package:flutter/scheduler.dart";
-import "package:mynotes/custom_widgets/notes_card.dart";
-import "package:mynotes/services/auth/auth_service.dart";
-import "package:mynotes/util/constants/routes.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:mynotes/custom_widgets/notes_card.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
+import 'package:mynotes/util/constants/routes.dart';
 
-import "../custom_widgets/button.dart";
-import "../custom_widgets/reused_widgets.dart";
+import '../custom_widgets/button.dart';
+import '../custom_widgets/reused_widgets.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -21,31 +21,31 @@ class _NotesViewState extends State<NotesView> {
     final textColor = Theme.of(context).buttonTheme.colorScheme!.onPrimary;
     final List<NotesCard> notes = [
       const NotesCard(
-        title: "Hello",
+        title: 'Hello',
         color: Colors.brown,
       ),
       const NotesCard(
-        title: "Hello",
+        title: 'Hello',
         color: Colors.brown,
       ),
       const NotesCard(
-        title: "Hello",
+        title: 'Hello',
         color: Colors.brown,
       ),
       const NotesCard(
-        title: "Hello",
+        title: 'Hello',
         color: Colors.brown,
       ),
       const NotesCard(
-        title: "Hello",
+        title: 'Hello',
         color: Colors.brown,
       ),
       const NotesCard(
-        title: "Hello",
+        title: 'Hello',
         color: Colors.brown,
       ),
       const NotesCard(
-        title: "Hello",
+        title: 'Hello',
         color: Colors.brown,
       ),
     ];
@@ -53,7 +53,7 @@ class _NotesViewState extends State<NotesView> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            "My Notes",
+            'My Notes',
             style: Theme.of(context).textTheme.headlineLarge,
           ),
           centerTitle: true,
@@ -66,13 +66,13 @@ class _NotesViewState extends State<NotesView> {
                 if (signOut) {
                   await AppAuthService.firebase().logout();
                   showToast(
-                      "Successfully logged out", backgroundColor, textColor);
+                      'Successfully logged out', backgroundColor, textColor);
                   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
                     Navigator.of(context)
                         .pushNamedAndRemoveUntil(loginRoute, (route) => false);
                   });
                 } else {
-                  showToast("Log out cancelled", backgroundColor, textColor);
+                  showToast('Log out cancelled', backgroundColor, textColor);
                 }
               },
             ),
@@ -85,16 +85,16 @@ class _NotesViewState extends State<NotesView> {
             children: [
               FloatingActionButton.extended(
                 onPressed: () {
-                  showToast("Hello", backgroundColor, textColor);
+                  showToast('Hello', backgroundColor, textColor);
                   notes.add(const NotesCard(
-                    title: "Hello",
+                    title: 'Hello',
                     color: Colors.red,
                     isFavorite: true,
                   ));
                 },
-                label: const Text("New"),
+                label: const Text('New'),
                 icon: const Icon(Icons.add_box),
-                tooltip: "Add a new note",
+                tooltip: 'Add a new note',
               ),
               const SizedBox(
                 height: 10.0,
@@ -116,17 +116,17 @@ class _NotesViewState extends State<NotesView> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text("Sign out"),
-            content: const Text("Are you sure you want to sign out?"),
+            title: const Text('Sign out'),
+            content: const Text('Are you sure you want to sign out?'),
             actions: [
               AppButton(
-                  text: "Yes, sign out",
+                  text: 'Yes, sign out',
                   icon: const Icon(Icons.outbond),
                   onPressed: () {
                     Navigator.of(context).pop(true);
                   }),
               AppButton(
-                  text: "Cancel",
+                  text: 'Cancel',
                   icon: const Icon(Icons.outbond),
                   onPressed: () {
                     Navigator.of(context).pop(false);
