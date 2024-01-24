@@ -18,13 +18,13 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  late final TextEditingController _email;
-  late final TextEditingController _password;
+  late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
   late bool _isPasswordVisible;
 
   Future<void> _handleLogin() async {
-    final email = _email.text;
-    final password = _password.text;
+    final email = _emailController.text;
+    final password = _passwordController.text;
     final backgroundColor = Theme.of(context).buttonTheme.colorScheme!.primary;
     final textColor = Theme.of(context).buttonTheme.colorScheme!.onPrimary;
     try {
@@ -47,16 +47,16 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   void initState() {
-    _email = TextEditingController();
-    _password = TextEditingController();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
     _isPasswordVisible = false;
     super.initState();
   }
 
   @override
   void dispose() {
-    _email.dispose();
-    _password.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -75,14 +75,14 @@ class _LoginViewState extends State<LoginView> {
           child: Column(
             children: [
               AppTextField(
-                controller: _email,
+                controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 hintText: 'Enter your email here',
                 labelText: 'Email',
                 prefixIcon: const Icon(Icons.email_rounded),
               ),
               AppTextField(
-                controller: _password,
+                controller: _passwordController,
                 hintText: 'Enter your password here',
                 labelText: 'Password',
                 prefixIcon: const Icon(Icons.lock),

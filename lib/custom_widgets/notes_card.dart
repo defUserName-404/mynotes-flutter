@@ -23,7 +23,7 @@ class NotesCard extends StatefulWidget {
 }
 
 class _NotesCardState extends State<NotesCard> {
-  late bool _isFavoriteSelected = widget.isFavorite;
+  late bool _isFavoriteSelected;
 
   @override
   void initState() {
