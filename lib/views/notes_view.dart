@@ -17,24 +17,37 @@ class NotesView extends StatefulWidget {
 class _NotesViewState extends State<NotesView> {
   late bool _isSearching;
   late final TextEditingController _searchController;
-  final List<String> _data = [
-    'Apple',
-    'Banana',
-    'Cherry',
-    'Date',
-    'Fig',
-    'Grape',
-    'Lemon',
-    'Mango',
-    'Orange',
-    'Papaya',
-    'Peach',
-    'Plum',
-    'Raspberry',
-    'Strawberry',
-    'Watermelon',
+  final List<NotesCard> _notes = [
+    const NotesCard(
+      title: 'Hello',
+      color: Colors.brown,
+    ),
+    const NotesCard(
+      title: 'Hello 1',
+      color: Colors.brown,
+    ),
+    const NotesCard(
+      title: '2',
+      color: Colors.brown,
+    ),
+    const NotesCard(
+      title: '3',
+      color: Colors.brown,
+    ),
+    const NotesCard(
+      title: '4',
+      color: Colors.brown,
+    ),
+    const NotesCard(
+      title: '5',
+      color: Colors.brown,
+    ),
+    const NotesCard(
+      title: '6',
+      color: Colors.brown,
+    ),
   ];
-  List<String> _filteredData = [];
+  List<NotesCard> _filteredNotes = [];
   bool _isLoading = false;
 
   @override
@@ -42,7 +55,7 @@ class _NotesViewState extends State<NotesView> {
     super.initState();
     _isSearching = false;
     _searchController = TextEditingController();
-    _filteredData = _data;
+    _filteredNotes = _notes;
     _searchController.addListener(_performSearch);
   }
 
@@ -56,12 +69,10 @@ class _NotesViewState extends State<NotesView> {
     setState(() {
       _isLoading = true;
     });
-
-    await Future.delayed(const Duration(milliseconds: 1000));
-
+    await Future.delayed(const Duration(milliseconds: 500));
     setState(() {
-      _filteredData = _data
-          .where((element) => element
+      _filteredNotes = _notes
+          .where((element) => element.title
               .toLowerCase()
               .contains(_searchController.text.toLowerCase()))
           .toList();
@@ -73,36 +84,6 @@ class _NotesViewState extends State<NotesView> {
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).buttonTheme.colorScheme!.primary;
     final textColor = Theme.of(context).buttonTheme.colorScheme!.onPrimary;
-    final List<NotesCard> notes = [
-      const NotesCard(
-        title: 'Hello',
-        color: Colors.brown,
-      ),
-      const NotesCard(
-        title: 'Hello',
-        color: Colors.brown,
-      ),
-      const NotesCard(
-        title: 'Hello',
-        color: Colors.brown,
-      ),
-      const NotesCard(
-        title: 'Hello',
-        color: Colors.brown,
-      ),
-      const NotesCard(
-        title: 'Hello',
-        color: Colors.brown,
-      ),
-      const NotesCard(
-        title: 'Hello',
-        color: Colors.brown,
-      ),
-      const NotesCard(
-        title: 'Hello',
-        color: Colors.brown,
-      ),
-    ];
 
     return SafeArea(
       child: Scaffold(
@@ -115,7 +96,6 @@ class _NotesViewState extends State<NotesView> {
                     border: InputBorder.none,
                   ),
                   autofocus: true,
-                  // Implement search functionality here
                 )
               : Text(
                   'My Notes',
@@ -127,13 +107,15 @@ class _NotesViewState extends State<NotesView> {
               icon: Icon(_isSearching ? Icons.close : Icons.search),
               onPressed: () {
                 setState(() => _isSearching = !_isSearching);
-                if (_isSearching) {}
+                if (!_isSearching) {
+                  _searchController.text = '';
+                }
               },
             ),
             Visibility(
               visible: !_isSearching,
               child: IconButton(
-                icon: const Icon(Icons.logout),
+                icon: const Icon(Icons.account_circle),
                 onPressed: () async {
                   final signOut = await showLogOutDialog(context);
                   if (signOut) {
@@ -155,31 +137,27 @@ class _NotesViewState extends State<NotesView> {
         body: _isLoading
             ? const Center(
                 child: CircularProgressIndicator(
-                color: Colors.green,
-              ))
-            : ListView.builder(
-                itemCount: _filteredData.length,
-                itemBuilder: (context, index) => ListTile(
-                      title: Text(_filteredData[index]),
-                    )),
-        // body: Container(
-        //   padding: const EdgeInsets.all(10),
-        //   child: Column(
-        //     mainAxisAlignment: MainAxisAlignment.center,
-        //     children: [
-        //       const SizedBox(
-        //         height: 10.0,
-        //       ),
-        //       Expanded(
-        //         child: GridView.count(
-        //           crossAxisCount: 2,
-        //           shrinkWrap: true,
-        //           children: notes,
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
+                  color: Colors.green,
+                ),
+              )
+            : Container(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                    Expanded(
+                      child: GridView.count(
+                        crossAxisCount: 2,
+                        shrinkWrap: true,
+                        children: _filteredNotes,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
         bottomNavigationBar: BottomAppBar(
           color: Theme.of(context).buttonTheme.colorScheme!.inversePrimary,
           shape: const CircularNotchedRectangle(),
@@ -195,7 +173,7 @@ class _NotesViewState extends State<NotesView> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             showToast('Hello', backgroundColor, textColor);
-            notes.add(const NotesCard(
+            _notes.add(const NotesCard(
               title: 'Hello',
               color: Colors.red,
               isFavorite: true,
