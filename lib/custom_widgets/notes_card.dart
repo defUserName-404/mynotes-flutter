@@ -1,22 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mynotes/models/note.dart';
 
 class NotesCard extends StatefulWidget {
-  final String title;
-  final String? content;
-  final Color color;
-  final bool borderOnForeground;
-  final Color shadowColor;
-  final bool isFavorite;
+  final Note note;
 
-  const NotesCard(
-      {super.key,
-      required this.title,
-      this.content,
-      this.color = Colors.white,
-      this.borderOnForeground = false,
-      this.shadowColor = Colors.grey,
-      this.isFavorite = false});
+  const NotesCard({super.key, required this.note});
 
   @override
   State<NotesCard> createState() => _NotesCardState();
@@ -27,7 +16,7 @@ class _NotesCardState extends State<NotesCard> {
 
   @override
   void initState() {
-    _isFavoriteSelected = widget.isFavorite;
+    _isFavoriteSelected = widget.note.isFavorite;
     super.initState();
   }
 
@@ -36,19 +25,19 @@ class _NotesCardState extends State<NotesCard> {
       _isFavoriteSelected = !_isFavoriteSelected;
     });
 
-    Fluttertoast.showToast(msg: 'Like pressed', backgroundColor: widget.color);
+    Fluttertoast.showToast(
+        msg: 'Like pressed', backgroundColor: widget.note.color);
   }
 
   void _onEditPressed() {
-    Fluttertoast.showToast(msg: 'Edit pressed', backgroundColor: widget.color);
+    Fluttertoast.showToast(
+        msg: 'Edit pressed', backgroundColor: widget.note.color);
   }
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: widget.color,
-      borderOnForeground: widget.borderOnForeground,
-      shadowColor: widget.shadowColor,
+      color: widget.note.color,
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
@@ -58,10 +47,10 @@ class _NotesCardState extends State<NotesCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.title,
+                    widget.note.title,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  if (widget.content != null) Text(widget.content!),
+                  if (widget.note.content != null) Text(widget.note.content!),
                   const SizedBox(height: 10.0),
                 ],
               ),

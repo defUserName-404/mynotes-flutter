@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:mynotes/custom_widgets/notes_card.dart';
+import 'package:mynotes/models/note.dart';
 
 import '../custom_widgets/button.dart';
 import '../custom_widgets/reused_widgets.dart';
@@ -17,42 +18,20 @@ class NotesView extends StatefulWidget {
 class _NotesViewState extends State<NotesView> {
   late bool _isSearching;
   late final TextEditingController _searchController;
-  final List<NotesCard> _notes = [
-    const NotesCard(
-      title: 'Hello',
-      color: Colors.brown,
-    ),
-    const NotesCard(
-      title: 'Hello 1',
-      color: Colors.brown,
-    ),
-    const NotesCard(
-      title: '2',
-      color: Colors.brown,
-    ),
-    const NotesCard(
-      title: '3',
-      color: Colors.brown,
-    ),
-    const NotesCard(
-      title: '4',
-      color: Colors.brown,
-    ),
-    const NotesCard(
-      title: '5',
-      color: Colors.brown,
-    ),
-    const NotesCard(
-      title: '6',
-      color: Colors.brown,
-    ),
-  ];
+  final List<NotesCard> _notes = [];
   List<NotesCard> _filteredNotes = [];
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    for (int i = 0; i <= 10; i++) {
+      _notes.add(NotesCard(
+          note: Note(
+              title: i < 3 ? "Hello $i" : "$i",
+              color: Colors.brown,
+              isFavorite: false)));
+    }
     _isSearching = false;
     _searchController = TextEditingController();
     _filteredNotes = _notes;
@@ -72,7 +51,7 @@ class _NotesViewState extends State<NotesView> {
     await Future.delayed(const Duration(milliseconds: 500));
     setState(() {
       _filteredNotes = _notes
-          .where((element) => element.title
+          .where((element) => element.note.title
               .toLowerCase()
               .contains(_searchController.text.toLowerCase()))
           .toList();
@@ -173,11 +152,9 @@ class _NotesViewState extends State<NotesView> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             showToast('Hello', backgroundColor, textColor);
-            _notes.add(const NotesCard(
-              title: 'Hello',
-              color: Colors.red,
-              isFavorite: true,
-            ));
+            _notes.add(NotesCard(
+                note:
+                    Note(title: "Hello", color: Colors.red, isFavorite: true)));
           },
           tooltip: 'Add a new note',
           child: const Icon(Icons.add_box),
@@ -203,7 +180,7 @@ class _NotesViewState extends State<NotesView> {
                   }),
               AppButton(
                   text: 'Cancel',
-                  icon: const Icon(Icons.outbond),
+                  icon: const Icon(Icons.cancel),
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   }),
