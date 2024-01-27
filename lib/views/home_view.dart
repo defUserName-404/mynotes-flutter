@@ -8,14 +8,14 @@ import '../custom_widgets/reused_widgets.dart';
 import '../services/auth/auth_service.dart';
 import '../util/constants/routes.dart';
 
-class NotesView extends StatefulWidget {
-  const NotesView({super.key});
+class HomeView extends StatefulWidget {
+  const HomeView({super.key});
 
   @override
-  State<NotesView> createState() => _NotesViewState();
+  State<HomeView> createState() => _HomeViewState();
 }
 
-class _NotesViewState extends State<NotesView> {
+class _HomeViewState extends State<HomeView> {
   late bool _isSearching;
   late final TextEditingController _searchController;
   final List<NotesCard> _notes = [];

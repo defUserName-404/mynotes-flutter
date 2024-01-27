@@ -33,7 +33,7 @@ class _LoginViewState extends State<LoginView> {
       devtools.log(userCredentials.toString());
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         Navigator.of(context)
-            .pushNamedAndRemoveUntil(notesRoute, (route) => false);
+            .pushNamedAndRemoveUntil(homeRoute, (route) => false);
         showToast('Successfully logged in', backgroundColor, textColor);
       });
     } on UserNotFoundAuthException {

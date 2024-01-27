@@ -5,8 +5,8 @@ import 'package:mynotes/services/auth/auth_service.dart';
 
 import '../util/constants/routes.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomePageRouting extends StatelessWidget {
+  const HomePageRouting({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +26,8 @@ class HomePage extends StatelessWidget {
                 } else {
                   if (loggedInUser.isEmailVerified) {
                     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          notesRoute, (route) => false);
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil(homeRoute, (route) => false);
                     });
                   } else {
                     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {

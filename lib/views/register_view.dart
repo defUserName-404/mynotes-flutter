@@ -34,7 +34,7 @@ class _RegisterViewState extends State<RegisterView> {
       showToast('Successfully registered', backgroundColor, textColor);
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         Navigator.of(context)
-            .pushNamedAndRemoveUntil(notesRoute, (route) => false);
+            .pushNamedAndRemoveUntil(homeRoute, (route) => false);
       });
     } on EmailAlreadyExistsException {
       showToast(
