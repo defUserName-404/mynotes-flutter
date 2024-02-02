@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mynotes/models/note.dart';
+
+import '../util/constants/routes.dart';
 
 class NotesCard extends StatefulWidget {
   final Note note;
@@ -30,8 +33,9 @@ class _NotesCardState extends State<NotesCard> {
   }
 
   void _onEditPressed() {
-    Fluttertoast.showToast(
-        msg: 'Edit pressed', backgroundColor: widget.note.color);
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      Navigator.of(context).pushNamed(noteCreateOrUpdateRoute);
+    });
   }
 
   void _onDeletePressed() {

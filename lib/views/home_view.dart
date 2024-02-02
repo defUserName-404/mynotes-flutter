@@ -149,7 +149,6 @@ class _HomeViewState extends State<HomeView> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            showToast('Hello', backgroundColor, textColor);
             SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
               Navigator.of(context).pushNamed(noteCreateOrUpdateRoute);
             });
@@ -173,18 +172,23 @@ class _HomeViewState extends State<HomeView> {
             title: const Text('Sign out'),
             content: const Text('Are you sure you want to sign out?'),
             actions: [
-              AppButton(
-                  text: 'Yes, sign out',
-                  icon: const Icon(Icons.outbond),
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  }),
-              AppButton(
-                  text: 'Cancel',
-                  icon: const Icon(Icons.cancel),
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  }),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  AppButton(
+                      text: 'Yes, sign out',
+                      icon: const Icon(Icons.outbond),
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      }),
+                  AppButton(
+                      text: 'Cancel',
+                      icon: const Icon(Icons.cancel),
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      }),
+                ],
+              )
             ],
           );
         }).then((value) => value ?? false);

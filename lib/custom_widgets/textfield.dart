@@ -10,6 +10,8 @@ class AppTextField extends StatelessWidget {
   final bool obscureText;
   final bool enableSuggestions;
   final bool autoCorrect;
+  final int? maxLines;
+  final bool expands;
 
   const AppTextField(
       {super.key,
@@ -21,6 +23,8 @@ class AppTextField extends StatelessWidget {
       this.suffixIcon,
       this.obscureText = false,
       this.enableSuggestions = true,
+      this.expands = false,
+      this.maxLines = 1,
       this.autoCorrect = true});
 
   @override
@@ -30,6 +34,7 @@ class AppTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
+      textAlignVertical: TextAlignVertical.top,
       decoration: InputDecoration(
           hintText: hintText,
           labelText: labelText,
@@ -44,6 +49,8 @@ class AppTextField extends StatelessWidget {
       obscureText: obscureText,
       enableSuggestions: enableSuggestions,
       autocorrect: autoCorrect,
+      expands: expands,
+      maxLines: maxLines,
     );
   }
 
