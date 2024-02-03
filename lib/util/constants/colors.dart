@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
 
 class CustomColors {
   CustomColors._();
@@ -12,3 +12,11 @@ class CustomColors {
   static const Color light = Color(0xFFF6F6F6);
   static const Color dark = Color(0xFF1E1E1E);
 }
+
+const colorSwatchForNote = [
+  Color(0xFFF13835),
+  Colors.brown,
+  Color(0xFF50CC50),
+  Color(0xFF0A71EB),
+  Colors.blueGrey
+];
