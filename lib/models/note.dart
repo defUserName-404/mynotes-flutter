@@ -11,4 +11,9 @@ class Note {
       this.content,
       required this.color,
       required this.isFavorite});
+
+  @override
+  String toString() {
+    return "title = $title, content = $content, color = $color, isFavorite = $isFavorite";
+  }
 }

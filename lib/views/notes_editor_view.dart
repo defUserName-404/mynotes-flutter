@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mynotes/custom_widgets/reused_widgets.dart';
 import 'package:mynotes/custom_widgets/textfield.dart';
+import 'package:mynotes/models/note.dart';
 import 'package:mynotes/util/constants/colors.dart';
 
 class NoteEditorView extends StatefulWidget {
@@ -13,11 +16,18 @@ class NoteEditorView extends StatefulWidget {
 class _NoteEditorViewState extends State<NoteEditorView> {
   late final TextEditingController _titleController;
   late final TextEditingController _contentController;
+  late bool _isFavorite;
+  late Color _backgroundColor;
 
   @override
   void initState() {
     _titleController = TextEditingController();
     _contentController = TextEditingController();
+    _isFavorite = false;
+    _backgroundColor =
+        WidgetsBinding.instance.window.platformBrightness == Brightness.light
+            ? CustomColors.light
+            : CustomColors.dark;
     super.initState();
   }
 
@@ -39,10 +49,25 @@ class _NoteEditorViewState extends State<NoteEditorView> {
               onPressed: () {},
             ),
             IconButton(
-              icon: const Icon(Icons.favorite_rounded),
-              onPressed: () {},
+              icon: _isFavorite
+                  ? const Icon(Icons.favorite_rounded)
+                  : const Icon(Icons.favorite_outline_rounded),
+              onPressed: () {
+                setState(() {
+                  _isFavorite = !_isFavorite;
+                });
+              },
             ),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.check))
+            IconButton(
+                onPressed: () {
+                  final note = Note(
+                      title: _titleController.text,
+                      content: _contentController.text,
+                      color: Colors.red,
+                      isFavorite: _isFavorite);
+                  log(note.toString());
+                },
+                icon: const Icon(Icons.check))
           ],
         ),
         body: Padding(
@@ -65,23 +90,26 @@ class _NoteEditorViewState extends State<NoteEditorView> {
                     keyboardType: TextInputType.multiline,
                     labelText: ''),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    for (Color color in colorSwatchForNote)
-                      GestureDetector(
-                        onTap: () {
-                          showToast('hello', color, Colors.black);
-                        },
-                        child: CircleAvatar(
-                          backgroundColor: color,
-                        ),
-                      ),
-                  ],
+            ],
+          ),
+        ),
+        backgroundColor: _backgroundColor,
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              for (Color color in colorSwatchForNote)
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _backgroundColor = color;
+                    });
+                    showToast('hello', color, Colors.black);
+                  },
+                  child: CircleAvatar(
+                    backgroundColor: color,
+                  ),
                 ),
-              ),
             ],
           ),
         ),
