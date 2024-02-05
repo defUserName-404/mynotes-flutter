@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:mynotes/custom_widgets/reused_widgets.dart';
 import 'package:mynotes/custom_widgets/textfield.dart';
 import 'package:mynotes/models/note.dart';
 import 'package:mynotes/util/constants/colors.dart';
@@ -42,77 +41,86 @@ class _NoteEditorViewState extends State<NoteEditorView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () {},
+          appBar: _appBar(),
+          body: _body(),
+          backgroundColor: _backgroundColor,
+          bottomNavigationBar: _bottomNavBar()),
+    );
+  }
+
+  PreferredSizeWidget _appBar() {
+    return AppBar(
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: () {},
+        ),
+        IconButton(
+          icon: _isFavorite
+              ? const Icon(Icons.favorite_rounded)
+              : const Icon(Icons.favorite_outline_rounded),
+          onPressed: () {
+            setState(() {
+              _isFavorite = !_isFavorite;
+            });
+          },
+        ),
+        IconButton(
+            onPressed: () {
+              final note = Note(
+                  title: _titleController.text,
+                  content: _contentController.text,
+                  color: Colors.red,
+                  isFavorite: _isFavorite);
+              log(note.toString());
+            },
+            icon: const Icon(Icons.check))
+      ],
+    );
+  }
+
+  Widget _body() {
+    return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: AppTextField(
+                  controller: _titleController,
+                  hintText: 'Title',
+                  labelText: ''),
             ),
-            IconButton(
-              icon: _isFavorite
-                  ? const Icon(Icons.favorite_rounded)
-                  : const Icon(Icons.favorite_outline_rounded),
-              onPressed: () {
+            Expanded(
+              child: AppTextField(
+                  controller: _contentController,
+                  hintText: 'Start typing your note here',
+                  expands: true,
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                  labelText: ''),
+            ),
+          ],
+        ));
+  }
+
+  Widget _bottomNavBar() {
+    return BottomAppBar(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          for (Color color in colorSwatchForNote)
+            GestureDetector(
+              onTap: () {
                 setState(() {
-                  _isFavorite = !_isFavorite;
+                  _backgroundColor = color;
                 });
               },
+              child: CircleAvatar(
+                backgroundColor: color,
+              ),
             ),
-            IconButton(
-                onPressed: () {
-                  final note = Note(
-                      title: _titleController.text,
-                      content: _contentController.text,
-                      color: Colors.red,
-                      isFavorite: _isFavorite);
-                  log(note.toString());
-                },
-                icon: const Icon(Icons.check))
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: AppTextField(
-                    controller: _titleController,
-                    hintText: 'Title',
-                    labelText: ''),
-              ),
-              Expanded(
-                child: AppTextField(
-                    controller: _contentController,
-                    hintText: 'Start typing your note here',
-                    expands: true,
-                    maxLines: null,
-                    keyboardType: TextInputType.multiline,
-                    labelText: ''),
-              ),
-            ],
-          ),
-        ),
-        backgroundColor: _backgroundColor,
-        bottomNavigationBar: BottomAppBar(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              for (Color color in colorSwatchForNote)
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _backgroundColor = color;
-                    });
-                    showToast('hello', color, Colors.black);
-                  },
-                  child: CircleAvatar(
-                    backgroundColor: color,
-                  ),
-                ),
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }

@@ -16,7 +16,7 @@ class CustomColors {
 const colorSwatchForNote = [
   Color(0xFFF13835),
   Colors.brown,
-  Color(0xFF50CC50),
+  Color(0xFF189B18),
   Color(0xFF0A71EB),
   Colors.blueGrey
 ];

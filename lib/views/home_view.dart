@@ -4,7 +4,6 @@ import 'package:mynotes/custom_widgets/notes_card.dart';
 import 'package:mynotes/models/note.dart';
 
 import '../custom_widgets/button.dart';
-import '../custom_widgets/reused_widgets.dart';
 import '../services/auth/auth_service.dart';
 import '../util/constants/routes.dart';
 
@@ -61,110 +60,90 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = Theme.of(context).buttonTheme.colorScheme!.primary;
-    final textColor = Theme.of(context).buttonTheme.colorScheme!.onPrimary;
-
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: _isSearching
-              ? TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    hintText: 'Search for notes',
-                    border: InputBorder.none,
-                  ),
-                  autofocus: true,
-                )
-              : Text(
-                  'My Notes',
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-          actions: [
-            IconButton(
-              icon: Icon(_isSearching ? Icons.close : Icons.search),
-              onPressed: () {
-                setState(() => _isSearching = !_isSearching);
-                if (!_isSearching) {
-                  _searchController.text = '';
-                }
-              },
-            ),
-            Visibility(
-              visible: !_isSearching,
-              child: IconButton(
-                icon: const Icon(Icons.account_circle),
-                onPressed: () async {
-                  final signOut = await showLogOutDialog(context);
-                  if (signOut) {
-                    await AppAuthService.firebase().logout();
-                    showToast(
-                        'Successfully logged out', backgroundColor, textColor);
-                    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          loginRoute, (route) => false);
-                    });
-                  } else {
-                    showToast('Log out cancelled', backgroundColor, textColor);
-                  }
-                },
-              ),
-            ),
-          ],
-        ),
-        body: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.green,
-                ),
-              )
-            : Container(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    Expanded(
-                      child: GridView.count(
-                        crossAxisCount: 2,
-                        shrinkWrap: true,
-                        children: _filteredNotes,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-        bottomNavigationBar: BottomAppBar(
-          shape: const CircularNotchedRectangle(),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.home)),
-              IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.favorite_rounded))
-            ],
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-              Navigator.of(context).pushNamed(noteCreateOrUpdateRoute);
-            });
-            _notes.add(NotesCard(
-                note:
-                    Note(title: "Hello", color: Colors.red, isFavorite: true)));
-          },
-          tooltip: 'Add a new note',
-          child: const Icon(Icons.add_box),
-        ),
+        appBar: _appBar(),
+        body: _body(),
+        bottomNavigationBar: _bottomNavBar(),
+        floatingActionButton: _fab(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
 
-  Future<bool> showLogOutDialog(BuildContext context) {
+  PreferredSizeWidget _appBar() {
+    return AppBar(
+      title: _isSearching
+          ? TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(
+                hintText: 'Search for notes',
+                border: InputBorder.none,
+              ),
+              autofocus: true,
+            )
+          : Text(
+              'My Notes',
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+      actions: [
+        IconButton(
+          icon: Icon(_isSearching ? Icons.close : Icons.search),
+          onPressed: () {
+            setState(() => _isSearching = !_isSearching);
+            if (!_isSearching) {
+              _searchController.text = '';
+            }
+          },
+        ),
+        Visibility(
+          visible: !_isSearching,
+          child: IconButton(
+            icon: const Icon(Icons.account_circle),
+            onPressed: () async {
+              final signOut = await _showLogOutDialog(context);
+              if (signOut) {
+                await AppAuthService.firebase().logout();
+                SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+                });
+              }
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _body() {
+    return _isLoading
+        ? const Center(
+            child: CircularProgressIndicator(
+              color: Colors.green,
+            ),
+          )
+        : Container(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 10.0,
+                ),
+                Expanded(
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    children: _filteredNotes,
+                  ),
+                ),
+              ],
+            ),
+          );
+  }
+
+  Future<bool> _showLogOutDialog(BuildContext context) {
     return showDialog(
         context: context,
         builder: (context) {
@@ -192,5 +171,32 @@ class _HomeViewState extends State<HomeView> {
             ],
           );
         }).then((value) => value ?? false);
+  }
+
+  Widget _bottomNavBar() {
+    return BottomAppBar(
+      shape: const CircularNotchedRectangle(),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.home)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.favorite_rounded))
+        ],
+      ),
+    );
+  }
+
+  Widget _fab() {
+    return FloatingActionButton(
+      onPressed: () {
+        SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+          Navigator.of(context).pushNamed(noteCreateOrUpdateRoute);
+        });
+        _notes.add(NotesCard(
+            note: Note(title: "Hello", color: Colors.red, isFavorite: true)));
+      },
+      tooltip: 'Add a new note',
+      child: const Icon(Icons.add_box),
+    );
   }
 }
