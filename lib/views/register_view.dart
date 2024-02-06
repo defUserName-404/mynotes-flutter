@@ -68,61 +68,67 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Register',
-            style: Theme.of(context).textTheme.headlineSmall,
+    return Scaffold(appBar: _appBar(), body: _body());
+  }
+
+  PreferredSizeWidget _appBar() {
+    return AppBar(
+      title: Text(
+        'Register',
+        style: Theme.of(context).textTheme.headlineSmall,
+      ),
+    );
+  }
+
+  Widget _body() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+      child: Column(
+        children: [
+          AppTextField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            hintText: 'Enter your email here',
+            labelText: 'Email',
+            prefixIcon: const Icon(Icons.email_rounded),
           ),
-        ),
-        body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-          child: Column(
-            children: [
-              AppTextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                hintText: 'Enter your email here',
-                labelText: 'Email',
-                prefixIcon: const Icon(Icons.email_rounded),
-              ),
-              AppTextField(
-                controller: _passwordController,
-                hintText: 'Enter your password here',
-                labelText: 'Password',
-                prefixIcon: const Icon(Icons.lock),
-                suffixIcon: IconButton(
-                    icon: Icon(
-                        _isPasswordVisible
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: Theme.of(context).iconTheme.color),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    }),
-                obscureText: !_isPasswordVisible,
-                enableSuggestions: false,
-                autoCorrect: false,
-              ),
-              AppButton(
-                  text: 'Register',
-                  icon: const Icon(Icons.directions),
-                  onPressed: () async {
-                    _handleRegistration();
-                  }),
-              AppButton(
-                  text: 'Already registered? Login here!',
-                  icon: const Icon(Icons.account_circle),
-                  onPressed: () {
-                    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          loginRoute, (route) => false);
-                    });
-                  }),
-            ],
+          AppTextField(
+            controller: _passwordController,
+            hintText: 'Enter your password here',
+            labelText: 'Password',
+            prefixIcon: const Icon(Icons.lock),
+            suffixIcon: IconButton(
+                icon: Icon(
+                    _isPasswordVisible
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                    color: Theme.of(context).iconTheme.color),
+                onPressed: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                }),
+            obscureText: !_isPasswordVisible,
+            enableSuggestions: false,
+            autoCorrect: false,
           ),
-        ));
+          AppButton(
+              text: 'Register',
+              icon: const Icon(Icons.directions),
+              onPressed: () async {
+                _handleRegistration();
+              }),
+          AppButton(
+              text: 'Already registered? Login here!',
+              icon: const Icon(Icons.account_circle),
+              onPressed: () {
+                SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+                });
+              }),
+        ],
+      ),
+    );
   }
 }

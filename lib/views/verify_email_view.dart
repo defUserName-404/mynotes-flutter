@@ -15,37 +15,43 @@ class VerifyEmailView extends StatefulWidget {
 class _VerifyEmailViewState extends State<VerifyEmailView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Verify Email',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-        ),
-        body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
-          alignment: Alignment.center,
-          child: Column(
-            children: [
-              const Text('Please verify your email address'),
-              AppButton(
-                  text: 'Send Email Verification',
-                  icon: const Icon(Icons.notification_add),
-                  onPressed: () async {
-                    await AppAuthService.firebase().sendEmailVerification();
-                  }),
-              AppButton(
-                  text: 'Restart',
-                  icon: const Icon(Icons.restart_alt),
-                  onPressed: () async {
-                    await AppAuthService.firebase().logout();
-                    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          loginRoute, (route) => false);
-                    });
-                  }),
-            ],
-          ),
-        ));
+    return Scaffold(appBar: _appBar(), body: _body());
+  }
+
+  PreferredSizeWidget _appBar() {
+    return AppBar(
+      title: Text(
+        'Verify Email',
+        style: Theme.of(context).textTheme.headlineSmall,
+      ),
+    );
+  }
+
+  Widget _body() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+      alignment: Alignment.center,
+      child: Column(
+        children: [
+          const Text('Please verify your email address'),
+          AppButton(
+              text: 'Send Email Verification',
+              icon: const Icon(Icons.notification_add),
+              onPressed: () async {
+                await AppAuthService.firebase().sendEmailVerification();
+              }),
+          AppButton(
+              text: 'Restart',
+              icon: const Icon(Icons.restart_alt),
+              onPressed: () async {
+                await AppAuthService.firebase().logout();
+                SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+                });
+              }),
+        ],
+      ),
+    );
   }
 }
