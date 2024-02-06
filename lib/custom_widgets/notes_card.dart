@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mynotes/models/note.dart';
-import 'package:mynotes/util/constants/colors.dart';
 
 import '../util/constants/routes.dart';
 
