@@ -2,13 +2,16 @@ import 'dart:developer' as devtools show log;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:getwidget/components/text_field/gf_text_field_rounded.dart';
 import 'package:mynotes/custom_widgets/reused_widgets.dart';
 import 'package:mynotes/custom_widgets/textfield.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
+import 'package:mynotes/util/constants/colors.dart';
 import 'package:mynotes/util/constants/routes.dart';
 
 import '../custom_widgets/button.dart';
+import '../custom_widgets/icon.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -25,8 +28,6 @@ class _LoginViewState extends State<LoginView> {
   Future<void> _handleLogin() async {
     final email = _emailController.text;
     final password = _passwordController.text;
-    final backgroundColor = Theme.of(context).buttonTheme.colorScheme!.primary;
-    final textColor = Theme.of(context).buttonTheme.colorScheme!.onPrimary;
     try {
       final userCredentials = await AppAuthService.firebase()
           .login(email: email, password: password);
@@ -34,14 +35,14 @@ class _LoginViewState extends State<LoginView> {
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         Navigator.of(context)
             .pushNamedAndRemoveUntil(homeRoute, (route) => false);
-        showToast('Successfully logged in', backgroundColor, textColor);
+        showToast('Successfully logged in');
       });
     } on UserNotFoundAuthException {
-      showToast('User not found', backgroundColor, textColor);
+      showToast('User not found');
     } on WrongPasswordAuthException {
-      showToast('Wrong password entered.', backgroundColor, textColor);
+      showToast('Wrong password entered.');
     } on GenericAuthException {
-      showToast('Authentication error.', backgroundColor, textColor);
+      showToast('Authentication error.');
     }
   }
 
@@ -79,24 +80,31 @@ class _LoginViewState extends State<LoginView> {
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
         child: Column(
           children: [
+            const GFTextFieldRounded(
+                iconPrefix: AppIcon(icon: Icons.email_rounded),
+                editingbordercolor: CustomColors.accent,
+                marginhorizontal: 0,
+                paddinghorizontal: 0,
+                idlebordercolor: CustomColors.accent,
+                borderwidth: 2,
+                cornerradius: 8,
+                hintText: 'hello'),
             AppTextField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              hintText: 'Enter your email here',
-              labelText: 'Email',
-              prefixIcon: const Icon(Icons.email_rounded),
-            ),
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                hintText: 'Enter your email here',
+                labelText: 'Email',
+                prefixIcon: const Icon(Icons.email_rounded)),
             AppTextField(
               controller: _passwordController,
               hintText: 'Enter your password here',
               labelText: 'Password',
               prefixIcon: const Icon(Icons.lock),
               suffixIcon: IconButton(
-                  icon: Icon(
-                      _isPasswordVisible
+                  icon: AppIcon(
+                      icon: _isPasswordVisible
                           ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: Theme.of(context).iconTheme.color),
+                          : Icons.visibility),
                   onPressed: () {
                     setState(() {
                       _isPasswordVisible = !_isPasswordVisible;

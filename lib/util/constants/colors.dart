@@ -7,6 +7,7 @@ class CustomColors {
   static const Color primary = Color(0xFF4B68FF);
   static const Color secondary = Color(0xFFFFE24B);
   static const Color accent = Color(0xFFB0C7FF);
+  static const Color onAccent = Color(0xFF000000);
 
   // Background Colors
   static const Color light = Color(0xFFF6F6F6);

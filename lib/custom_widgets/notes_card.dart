@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mynotes/custom_widgets/reused_widgets.dart';
 import 'package:mynotes/models/note.dart';
 
 import '../util/constants/routes.dart';
+import 'icon.dart';
 
 class NotesCard extends StatefulWidget {
   final Note note;
@@ -28,8 +29,7 @@ class _NotesCardState extends State<NotesCard> {
       _isFavoriteSelected = !_isFavoriteSelected;
     });
 
-    Fluttertoast.showToast(
-        msg: 'Like pressed', backgroundColor: widget.note.color);
+    showToast('Like pressed');
   }
 
   void _onEditPressed() {
@@ -39,8 +39,7 @@ class _NotesCardState extends State<NotesCard> {
   }
 
   void _onDeletePressed() {
-    Fluttertoast.showToast(
-        msg: 'Delete pressed', backgroundColor: widget.note.color);
+    showToast('Delete pressed');
   }
 
   @override
@@ -70,18 +69,18 @@ class _NotesCardState extends State<NotesCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.edit_note_rounded),
+                    icon: const AppIcon(icon: Icons.edit_note_rounded),
                     onPressed: _onEditPressed,
                   ),
                   IconButton(
                     icon: _isFavoriteSelected
-                        ? const Icon(Icons.favorite_rounded)
-                        : const Icon(Icons.favorite_outline_rounded),
+                        ? const AppIcon(icon: Icons.favorite_rounded)
+                        : const AppIcon(icon: Icons.favorite_outline_rounded),
                     onPressed: _onLikePressed,
                   ),
                   IconButton(
                       onPressed: _onDeletePressed,
-                      icon: const Icon(Icons.delete))
+                      icon: const AppIcon(icon: Icons.delete))
                 ],
               ),
             ),

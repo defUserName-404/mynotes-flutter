@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:mynotes/custom_widgets/notes_card.dart';
+import 'package:mynotes/custom_widgets/reused_widgets.dart';
 import 'package:mynotes/models/note.dart';
 
 import '../custom_widgets/button.dart';
+import '../custom_widgets/icon.dart';
 import '../services/auth/auth_service.dart';
 import '../util/constants/routes.dart';
 
@@ -88,7 +90,7 @@ class _HomeViewState extends State<HomeView> {
             ),
       actions: [
         IconButton(
-          icon: Icon(_isSearching ? Icons.close : Icons.search),
+          icon: AppIcon(icon: _isSearching ? Icons.close : Icons.search),
           onPressed: () {
             setState(() => _isSearching = !_isSearching);
             if (!_isSearching) {
@@ -99,7 +101,7 @@ class _HomeViewState extends State<HomeView> {
         Visibility(
           visible: !_isSearching,
           child: IconButton(
-            icon: const Icon(Icons.account_circle),
+            icon: const AppIcon(icon: Icons.account_circle),
             onPressed: () async {
               final signOut = await _showLogOutDialog(context);
               if (signOut) {
@@ -165,6 +167,7 @@ class _HomeViewState extends State<HomeView> {
                       icon: const Icon(Icons.cancel),
                       onPressed: () {
                         Navigator.of(context).pop(false);
+                        showToast('Sign out cancelled');
                       }),
                 ],
               )
@@ -179,8 +182,10 @@ class _HomeViewState extends State<HomeView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.home)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.favorite_rounded))
+          IconButton(onPressed: () {}, icon: const AppIcon(icon: Icons.home)),
+          IconButton(
+              onPressed: () {},
+              icon: const AppIcon(icon: Icons.favorite_rounded))
         ],
       ),
     );
@@ -196,7 +201,7 @@ class _HomeViewState extends State<HomeView> {
             note: Note(title: "Hello", color: Colors.red, isFavorite: true)));
       },
       tooltip: 'Add a new note',
-      child: const Icon(Icons.add_box),
+      child: const AppIcon(icon: Icons.add_box),
     );
   }
 }

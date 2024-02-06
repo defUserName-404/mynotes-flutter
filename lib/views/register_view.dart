@@ -6,6 +6,7 @@ import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 
 import '../custom_widgets/button.dart';
+import '../custom_widgets/icon.dart';
 import '../custom_widgets/reused_widgets.dart';
 import '../custom_widgets/textfield.dart';
 import '../util/constants/routes.dart';
@@ -25,29 +26,24 @@ class _RegisterViewState extends State<RegisterView> {
   Future<void> _handleRegistration() async {
     final email = _emailController.text;
     final password = _passwordController.text;
-    final backgroundColor = Theme.of(context).buttonTheme.colorScheme!.primary;
-    final textColor = Theme.of(context).buttonTheme.colorScheme!.onPrimary;
     try {
       final userCredentials = await AppAuthService.firebase()
           .register(email: email, password: password);
       devtools.log(userCredentials.toString());
-      showToast('Successfully registered', backgroundColor, textColor);
+      showToast('Successfully registered');
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         Navigator.of(context)
             .pushNamedAndRemoveUntil(homeRoute, (route) => false);
       });
     } on EmailAlreadyExistsException {
       showToast(
-          'Already registered with the provided email. Try logging in instead.',
-          backgroundColor,
-          textColor);
+          'Already registered with the provided email. Try logging in instead.');
     } on WeakPasswordAuthException {
-      showToast('Weak password provided. Try a stronger one.', backgroundColor,
-          textColor);
+      showToast('Weak password provided. Try a stronger one.');
     } on InvalidEmailAuthException {
-      showToast('Invalid email!', backgroundColor, textColor);
+      showToast('Invalid email!');
     } on GenericAuthException {
-      showToast('Authentication error.', backgroundColor, textColor);
+      showToast('Authentication error.');
     }
   }
 
@@ -98,11 +94,10 @@ class _RegisterViewState extends State<RegisterView> {
             labelText: 'Password',
             prefixIcon: const Icon(Icons.lock),
             suffixIcon: IconButton(
-                icon: Icon(
-                    _isPasswordVisible
+                icon: AppIcon(
+                    icon: _isPasswordVisible
                         ? Icons.visibility_off
-                        : Icons.visibility,
-                    color: Theme.of(context).iconTheme.color),
+                        : Icons.visibility),
                 onPressed: () {
                   setState(() {
                     _isPasswordVisible = !_isPasswordVisible;

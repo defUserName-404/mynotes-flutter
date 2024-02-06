@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/components/button/gf_button.dart';
-import 'package:getwidget/size/gf_size.dart';
-import 'package:getwidget/types/gf_button_type.dart';
+import 'package:getwidget/getwidget.dart';
+import 'package:mynotes/util/constants/colors.dart';
 
 class AppButton extends StatelessWidget {
   final String text;
-  final Icon icon;
+  final Widget icon;
   final VoidCallback onPressed;
 
   const AppButton(
@@ -18,10 +17,12 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GFButton(
       text: text,
+      textStyle: const TextStyle(color: CustomColors.onAccent),
       icon: icon,
       onPressed: onPressed,
-      type: GFButtonType.outline2x,
-      color: Theme.of(context).buttonTheme.colorScheme!.primary,
+      type: GFButtonType.solid,
+      color: CustomColors.accent,
+      shape: GFButtonShape.pills,
       size: GFSize.LARGE,
     );
   }

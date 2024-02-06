@@ -5,6 +5,8 @@ import 'package:mynotes/custom_widgets/textfield.dart';
 import 'package:mynotes/models/note.dart';
 import 'package:mynotes/util/constants/colors.dart';
 
+import '../custom_widgets/icon.dart';
+
 class NoteEditorView extends StatefulWidget {
   const NoteEditorView({super.key});
 
@@ -52,13 +54,13 @@ class _NoteEditorViewState extends State<NoteEditorView> {
     return AppBar(
       actions: [
         IconButton(
-          icon: const Icon(Icons.delete),
+          icon: const AppIcon(icon: Icons.delete),
           onPressed: () {},
         ),
         IconButton(
           icon: _isFavorite
-              ? const Icon(Icons.favorite_rounded)
-              : const Icon(Icons.favorite_outline_rounded),
+              ? const AppIcon(icon: Icons.favorite_rounded)
+              : const AppIcon(icon: Icons.favorite_outline_rounded),
           onPressed: () {
             setState(() {
               _isFavorite = !_isFavorite;
@@ -74,7 +76,7 @@ class _NoteEditorViewState extends State<NoteEditorView> {
                   isFavorite: _isFavorite);
               log(note.toString());
             },
-            icon: const Icon(Icons.check))
+            icon: const AppIcon(icon: Icons.check))
       ],
     );
   }

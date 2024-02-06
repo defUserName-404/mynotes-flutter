@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mynotes/util/constants/colors.dart';
 
 class AppTextField extends StatelessWidget {
   final TextEditingController controller;
@@ -29,23 +30,20 @@ class AppTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
       textAlignVertical: TextAlignVertical.top,
       decoration: InputDecoration(
-          hintText: hintText,
-          labelText: labelText,
-          floatingLabelAlignment: FloatingLabelAlignment.center,
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: BorderSide(color: theme.colorScheme.primary)),
-          prefixIcon:
-              _getColoredIcon(prefixIcon, Theme.of(context).iconTheme.color),
-          suffixIcon:
-              _getColoredIcon(suffixIcon, Theme.of(context).iconTheme.color)),
+        hintText: hintText,
+        labelText: labelText,
+        floatingLabelAlignment: FloatingLabelAlignment.center,
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: const BorderSide(color: CustomColors.accent)),
+        prefixIcon: _getColoredIcon(prefixIcon),
+        suffixIcon: _getColoredIcon(suffixIcon),
+      ),
       obscureText: obscureText,
       enableSuggestions: enableSuggestions,
       autocorrect: autoCorrect,
@@ -54,10 +52,10 @@ class AppTextField extends StatelessWidget {
     );
   }
 
-  Widget? _getColoredIcon(Widget? icon, Color? color) {
+  Widget? _getColoredIcon(Widget? icon) {
     if (icon == null) return null;
     return IconTheme(
-      data: IconThemeData(color: color),
+      data: const IconThemeData(color: CustomColors.accent),
       child: icon,
     );
   }
