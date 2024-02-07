@@ -2,6 +2,8 @@ import 'dart:developer' as devtools show log;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:getwidget/components/text_field/gf_text_field.dart';
+import 'package:getwidget/components/text_field/gf_text_field_pill.dart';
 import 'package:getwidget/components/text_field/gf_text_field_rounded.dart';
 import 'package:mynotes/custom_widgets/reused_widgets.dart';
 import 'package:mynotes/custom_widgets/textfield.dart';
@@ -77,49 +79,49 @@ class _LoginViewState extends State<LoginView> {
 
   Widget _body() {
     return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
         child: Column(
           children: [
-            const GFTextFieldRounded(
-                iconPrefix: AppIcon(icon: Icons.email_rounded),
-                editingbordercolor: CustomColors.accent,
-                marginhorizontal: 0,
-                paddinghorizontal: 0,
-                idlebordercolor: CustomColors.accent,
-                borderwidth: 2,
-                cornerradius: 8,
-                hintText: 'hello'),
-            AppTextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                hintText: 'Enter your email here',
-                labelText: 'Email',
-                prefixIcon: const Icon(Icons.email_rounded)),
-            AppTextField(
-              controller: _passwordController,
-              hintText: 'Enter your password here',
-              labelText: 'Password',
-              prefixIcon: const Icon(Icons.lock),
-              suffixIcon: IconButton(
-                  icon: AppIcon(
-                      icon: _isPasswordVisible
-                          ? Icons.visibility_off
-                          : Icons.visibility),
-                  onPressed: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  }),
-              obscureText: !_isPasswordVisible,
-              enableSuggestions: false,
-              autoCorrect: false,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: AppTextField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  hintText: 'Enter your email here',
+                  labelText: 'Email',
+                  prefixIcon: const Icon(Icons.email_rounded)),
             ),
-            AppButton(
-                text: 'Login',
-                icon: const Icon(Icons.directions),
-                onPressed: () async {
-                  _handleLogin();
-                }),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: AppTextField(
+                controller: _passwordController,
+                hintText: 'Enter your password here',
+                labelText: 'Password',
+                prefixIcon: const Icon(Icons.lock),
+                suffixIcon: IconButton(
+                    icon: AppIcon(
+                        icon: _isPasswordVisible
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    }),
+                obscureText: !_isPasswordVisible,
+                enableSuggestions: false,
+                autoCorrect: false,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: AppButton(
+                  text: 'Login',
+                  icon: const Icon(Icons.directions),
+                  onPressed: () async {
+                    _handleLogin();
+                  }),
+            ),
             AppButton(
                 text: 'Don\'t have an account? Register here!',
                 icon: const Icon(Icons.account_circle),

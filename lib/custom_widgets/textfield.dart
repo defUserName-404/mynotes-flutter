@@ -37,10 +37,15 @@ class AppTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         labelText: labelText,
+        labelStyle: const TextStyle(
+            fontWeight: FontWeight.bold, color: CustomColors.accent),
         floatingLabelAlignment: FloatingLabelAlignment.center,
-        border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: const BorderSide(color: CustomColors.accent)),
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4.0),
+            borderSide: const BorderSide(color: CustomColors.accent, width: 1)),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4.0),
+            borderSide: const BorderSide(color: CustomColors.accent, width: 3)),
         prefixIcon: _getColoredIcon(prefixIcon),
         suffixIcon: _getColoredIcon(suffixIcon),
       ),
