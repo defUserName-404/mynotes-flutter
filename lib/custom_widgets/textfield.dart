@@ -38,14 +38,16 @@ class AppTextField extends StatelessWidget {
         hintText: hintText,
         labelText: labelText,
         labelStyle: const TextStyle(
-            fontWeight: FontWeight.bold, color: CustomColors.accent),
+            fontWeight: FontWeight.bold, color: CustomColors.primary),
         floatingLabelAlignment: FloatingLabelAlignment.center,
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4.0),
-            borderSide: const BorderSide(color: CustomColors.accent, width: 1)),
+            borderSide:
+                const BorderSide(color: CustomColors.primary, width: 1)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4.0),
-            borderSide: const BorderSide(color: CustomColors.accent, width: 3)),
+            borderSide:
+                const BorderSide(color: CustomColors.primary, width: 3)),
         prefixIcon: _getColoredIcon(prefixIcon),
         suffixIcon: _getColoredIcon(suffixIcon),
       ),
@@ -60,7 +62,7 @@ class AppTextField extends StatelessWidget {
   Widget? _getColoredIcon(Widget? icon) {
     if (icon == null) return null;
     return IconTheme(
-      data: const IconThemeData(color: CustomColors.accent),
+      data: const IconThemeData(color: CustomColors.primary),
       child: icon,
     );
   }

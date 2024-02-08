@@ -52,6 +52,12 @@ class _NoteEditorViewState extends State<NoteEditorView> {
 
   PreferredSizeWidget _appBar() {
     return AppBar(
+      leading: IconButton(
+        onPressed: () {
+          Navigator.maybePop(context);
+        },
+        icon: const AppIcon(icon: Icons.arrow_back_ios_rounded),
+      ),
       actions: [
         IconButton(
           icon: const AppIcon(icon: Icons.delete),

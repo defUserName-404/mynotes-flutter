@@ -34,7 +34,7 @@ class _NotesCardState extends State<NotesCard> {
 
   void _onEditPressed() {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      Navigator.of(context).pushNamed(noteCreateOrUpdateRoute);
+      Navigator.of(context).pushNamed(noteEditorRoute);
     });
   }
 

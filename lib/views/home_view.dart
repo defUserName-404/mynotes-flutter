@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:mynotes/custom_widgets/notes_card.dart';
 import 'package:mynotes/custom_widgets/reused_widgets.dart';
 import 'package:mynotes/models/note.dart';
+import 'package:mynotes/util/constants/colors.dart';
 
 import '../custom_widgets/button.dart';
 import '../custom_widgets/icon.dart';
@@ -193,15 +194,19 @@ class _HomeViewState extends State<HomeView> {
 
   Widget _fab() {
     return FloatingActionButton(
+      backgroundColor: CustomColors.primary,
       onPressed: () {
         SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-          Navigator.of(context).pushNamed(noteCreateOrUpdateRoute);
+          Navigator.of(context).pushNamed(noteEditorRoute);
         });
         _notes.add(NotesCard(
             note: Note(title: "Hello", color: Colors.red, isFavorite: true)));
       },
       tooltip: 'Add a new note',
-      child: const AppIcon(icon: Icons.add_box),
+      child: const Icon(
+        Icons.add_box,
+        color: CustomColors.accent,
+      ),
     );
   }
 }

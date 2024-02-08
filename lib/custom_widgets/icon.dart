@@ -10,7 +10,7 @@ class AppIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Icon(
       icon,
-      color: CustomColors.accent,
+      color: CustomColors.primary,
     );
   }
 }

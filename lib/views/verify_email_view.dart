@@ -3,7 +3,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 
 import '../custom_widgets/button.dart';
-import '../custom_widgets/icon.dart';
 import '../util/constants/routes.dart';
 
 class VerifyEmailView extends StatefulWidget {

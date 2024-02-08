@@ -21,7 +21,7 @@ class AppButton extends StatelessWidget {
       icon: icon,
       onPressed: onPressed,
       type: GFButtonType.solid,
-      color: CustomColors.accent,
+      color: CustomColors.primary,
       size: GFSize.LARGE,
     );
   }
