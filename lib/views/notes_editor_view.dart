@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/custom_widgets/textfield.dart';
 import 'package:mynotes/models/note.dart';
@@ -74,13 +75,15 @@ class _NoteEditorViewState extends State<NoteEditorView> {
           },
         ),
         IconButton(
-            onPressed: () {
+            onPressed: () async {
               final note = Note(
                   title: _titleController.text,
                   content: _contentController.text,
-                  color: Colors.red,
+                  color: _backgroundColor,
                   isFavorite: _isFavorite);
               log(note.toString());
+              print(note.toJson());
+              await addNoteToFirestore(note); // await addNoteToFirestore(note);
             },
             icon: const AppIcon(icon: Icons.check))
       ],
@@ -89,11 +92,11 @@ class _NoteEditorViewState extends State<NoteEditorView> {
 
   Widget _body() {
     return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.only(bottom: 8),
               child: AppTextField(
                   controller: _titleController,
                   hintText: 'Title',
@@ -131,5 +134,16 @@ class _NoteEditorViewState extends State<NoteEditorView> {
         ],
       ),
     );
+  }
+
+  Future<void> addNoteToFirestore(Note note) async {
+    // Get a reference to the Firestore collection
+    final collectionRef = FirebaseFirestore.instance.collection('notes');
+
+    // Add the note data to the collection
+    await collectionRef.add(note.toJson());
+
+    // Optionally, handle success or error scenarios
+    log('Note added');
   }
 }
