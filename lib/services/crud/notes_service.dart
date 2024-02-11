@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
@@ -76,6 +78,22 @@ class NotesService {
         isSyncWithCloud: isSynced == 0 ? false : true);
   }
 
+  Future<DatabaseNote> getNote({required int id}) async {
+    final db = _getDatabaseOrThrow();
+    final notes =
+        await db.query(noteTable, limit: 1, where: 'id = ?', whereArgs: [id]);
+    if (notes.isEmpty) {
+      throw NoteCannotBeFoundException();
+    }
+    return DatabaseNote.fromRow(notes.first);
+  }
+
+  Future<Iterable<DatabaseNote>> getAllNotes() async {
+    final db = _getDatabaseOrThrow();
+    final notes = await db.query(noteTable);
+    return notes.map((noteRow) => DatabaseNote.fromRow(noteRow));
+  }
+
   Future<void> deleteNote({required int id}) async {
     final db = _getDatabaseOrThrow();
     final deletedCount =
@@ -83,6 +101,23 @@ class NotesService {
     if (deletedCount != 1) {
       throw NoteDeleteNotSuccessfulException();
     }
+  }
+
+  Future<DatabaseNote> updateNote(
+      {required DatabaseNote note, required int id}) async {
+    final db = _getDatabaseOrThrow();
+    final note = await getNote(id: id);
+    final updateCount = await db.update(noteTable, {
+      titleColumn: note.title,
+      contentColumn: note.content,
+      colorColumn: note.color,
+      isFavoriteColumn: note.isFavorite,
+      isSyncWithCloudColumn: note.isSyncWithCloud,
+    });
+    if (updateCount == 1) {
+      throw NoteCannotBeUpdatedException();
+    }
+    return await getNote(id: id);
   }
 
   Future<void> open() async {
