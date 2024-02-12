@@ -10,21 +10,17 @@ import 'crud_exceptions.dart';
 class NotesService {
   Database? _db;
 
+  List<DatabaseNote> _notes = [];
+
+  final _notesStreamController =
+      StreamController<List<DatabaseNote>>.broadcast();
+
   Database _getDatabaseOrThrow() {
     final db = _db;
     if (db == null) {
       throw DatabaseNotOpenException();
     }
     return db;
-  }
-
-  Future<void> deleteUser({required String email}) async {
-    final db = _getDatabaseOrThrow();
-    final deletedCount = await db.delete(userTable,
-        where: 'email = ?', whereArgs: [email.toLowerCase()]);
-    if (deletedCount != 1) {
-      throw UserDeleteNotSuccessfulException();
-    }
   }
 
   Future<DatabaseUser> createUser({required String email}) async {
@@ -49,6 +45,15 @@ class NotesService {
     return DatabaseUser.fromRow(results.first);
   }
 
+  Future<void> deleteUser({required String email}) async {
+    final db = _getDatabaseOrThrow();
+    final deletedCount = await db.delete(userTable,
+        where: 'email = ?', whereArgs: [email.toLowerCase()]);
+    if (deletedCount != 1) {
+      throw UserDeleteNotSuccessfulException();
+    }
+  }
+
   Future<DatabaseNote> createNote({required DatabaseUser owner}) async {
     final db = _getDatabaseOrThrow();
     final dbUser = await getUser(email: owner.email);
@@ -68,7 +73,7 @@ class NotesService {
       isFavoriteColumn: isFavorite,
       isSyncWithCloudColumn: isSynced
     });
-    return DatabaseNote(
+    final note = DatabaseNote(
         id: noteId,
         userId: owner.id,
         title: title,
@@ -76,6 +81,9 @@ class NotesService {
         isFavorite: isFavorite == 0 ? false : true,
         color: color,
         isSyncWithCloud: isSynced == 0 ? false : true);
+    _notes.add(note);
+    _notesStreamController.add(_notes);
+    return note;
   }
 
   Future<DatabaseNote> getNote({required int id}) async {
@@ -85,22 +93,17 @@ class NotesService {
     if (notes.isEmpty) {
       throw NoteCannotBeFoundException();
     }
-    return DatabaseNote.fromRow(notes.first);
+    final note = DatabaseNote.fromRow(notes.first);
+    _notes.removeWhere((note) => note.id == id);
+    _notes.add(note);
+    _notesStreamController.add(_notes);
+    return note;
   }
 
   Future<Iterable<DatabaseNote>> getAllNotes() async {
     final db = _getDatabaseOrThrow();
     final notes = await db.query(noteTable);
     return notes.map((noteRow) => DatabaseNote.fromRow(noteRow));
-  }
-
-  Future<void> deleteNote({required int id}) async {
-    final db = _getDatabaseOrThrow();
-    final deletedCount =
-        await db.delete(noteTable, where: 'id = ?', whereArgs: [id]);
-    if (deletedCount != 1) {
-      throw NoteDeleteNotSuccessfulException();
-    }
   }
 
   Future<DatabaseNote> updateNote(
@@ -114,10 +117,31 @@ class NotesService {
       isFavoriteColumn: note.isFavorite,
       isSyncWithCloudColumn: note.isSyncWithCloud,
     });
-    if (updateCount == 1) {
+    if (updateCount == 0) {
       throw NoteCannotBeUpdatedException();
     }
-    return await getNote(id: id);
+    final updatedNote = await getNote(id: id);
+    _notes.removeWhere((note) => note.id == updatedNote.id);
+    _notes.add(updatedNote);
+    _notesStreamController.add(_notes);
+    return updatedNote;
+  }
+
+  Future<void> deleteNote({required int id}) async {
+    final db = _getDatabaseOrThrow();
+    final deletedCount =
+        await db.delete(noteTable, where: 'id = ?', whereArgs: [id]);
+    if (deletedCount == 0) {
+      throw NoteDeleteNotSuccessfulException();
+    }
+    _notes.removeWhere((note) => note.id == id);
+    _notesStreamController.add(_notes);
+  }
+
+  Future<void> _cacheNotes() async {
+    final allNotes = await getAllNotes();
+    _notes = allNotes.toList();
+    _notesStreamController.add(_notes);
   }
 
   Future<void> open() async {
@@ -131,6 +155,7 @@ class NotesService {
       _db = db;
       await db.execute(createUserTable);
       await db.execute(createNoteTable);
+      await _cacheNotes();
     } on MissingPlatformDirectoryException {
       throw UnableToGetDocumentsDirectoryException();
     }
