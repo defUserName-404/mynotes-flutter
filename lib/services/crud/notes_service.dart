@@ -15,6 +15,18 @@ class NotesService {
   final _notesStreamController =
       StreamController<List<DatabaseNote>>.broadcast();
 
+  Future<DatabaseUser> getOrCreateUser({required String email}) async {
+    try {
+      final user = await getUser(email: email);
+      return user;
+    } on UserCannotBeFoundException {
+      final createdUser = await createUser(email: email);
+      return createdUser;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Database _getDatabaseOrThrow() {
     final db = _db;
     if (db == null) {
