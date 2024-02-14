@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:mynotes/custom_widgets/notes_card.dart';
 import 'package:mynotes/custom_widgets/reused_widgets.dart';
 import 'package:mynotes/models/note.dart';
+import 'package:mynotes/services/crud/notes_service.dart';
 import 'package:mynotes/util/constants/colors.dart';
 
 import '../custom_widgets/button.dart';
@@ -23,6 +24,9 @@ class _HomeViewState extends State<HomeView> {
   final List<NotesCard> _notes = [];
   List<NotesCard> _filteredNotes = [];
   bool _isLoading = false;
+  late final NotesService _notesService;
+
+  String get userEmail => AppAuthService.firebase().currentUser!.email;
 
   @override
   void initState() {
@@ -38,11 +42,14 @@ class _HomeViewState extends State<HomeView> {
     _searchController = TextEditingController();
     _filteredNotes = _notes;
     _searchController.addListener(_performSearch);
+    _notesService = NotesService();
+    _notesService.open();
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _notesService.close();
     super.dispose();
   }
 
@@ -120,30 +127,54 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _body() {
-    return _isLoading
-        ? const Center(
-            child: CircularProgressIndicator(
-              color: Colors.green,
-            ),
-          )
-        : Container(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  height: 10.0,
-                ),
-                Expanded(
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    shrinkWrap: true,
-                    children: _filteredNotes,
-                  ),
-                ),
-              ],
-            ),
-          );
+    return FutureBuilder(
+        future: _notesService.getOrCreateUser(email: userEmail),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              return StreamBuilder(
+                  stream: _notesService.allNotes,
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Text('your notes will appear here');
+                      default:
+                        return const CircularProgressIndicator(
+                          color: Colors.red,
+                        );
+                    }
+                  });
+            default:
+              return const CircularProgressIndicator(
+                color: Colors.green,
+              );
+          }
+        });
+
+    // return _isLoading
+    //     ? const Center(
+    //         child: CircularProgressIndicator(
+    //           color: Colors.green,
+    //         ),
+    //       )
+    //     : Container(
+    //         padding: const EdgeInsets.all(10),
+    //         child: Column(
+    //           mainAxisAlignment: MainAxisAlignment.center,
+    //           children: [
+    //             const SizedBox(
+    //               height: 10.0,
+    //             ),
+    //             Expanded(
+    //               child: GridView.count(
+    //                 crossAxisCount: 2,
+    //                 shrinkWrap: true,
+    //                 children: _filteredNotes,
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       );
   }
 
   Future<bool> _showLogOutDialog(BuildContext context) {
@@ -205,7 +236,7 @@ class _HomeViewState extends State<HomeView> {
       tooltip: 'Add a new note',
       child: const Icon(
         Icons.add_box,
-        color: CustomColors.accent,
+        color: CustomColors.onPrimary,
       ),
     );
   }

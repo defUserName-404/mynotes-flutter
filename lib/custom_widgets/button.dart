@@ -17,7 +17,7 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GFButton(
       text: text,
-      textStyle: const TextStyle(color: CustomColors.onAccent),
+      textStyle: const TextStyle(color: CustomColors.onPrimary),
       icon: icon,
       onPressed: onPressed,
       type: GFButtonType.solid,
