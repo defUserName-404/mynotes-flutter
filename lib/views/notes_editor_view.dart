@@ -86,7 +86,8 @@ class _NoteEditorViewState extends State<NoteEditorView> {
         IconButton(
             icon: const AppIcon(icon: Icons.delete),
             onPressed: () async {
-              _notesService.deleteNote(id: _passedNote!.id);
+              _deleteNote(_passedNote!.id);
+              if (context.mounted) Navigator.maybePop(context);
             }),
         IconButton(
           icon: _isFavorite
@@ -169,7 +170,11 @@ class _NoteEditorViewState extends State<NoteEditorView> {
     return await _notesService.createNote(owner: owner, note: newNote);
   }
 
-  Future<DatabaseNote> _updateExistingNote(Note updatedNote, int id) async {
-    return await _notesService.updateNote(note: updatedNote, id: id);
+  Future<DatabaseNote> _updateExistingNote(Note updatedNote, int noteId) async {
+    return await _notesService.updateNote(note: updatedNote, id: noteId);
+  }
+
+  Future<void> _deleteNote(int noteId) async {
+    _notesService.deleteNote(id: noteId);
   }
 }
