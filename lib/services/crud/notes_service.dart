@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -6,6 +7,7 @@ import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../../models/note.dart';
 import 'crud_exceptions.dart';
 
 class NotesService {
@@ -16,7 +18,6 @@ class NotesService {
   NotesService._sharedInstance();
 
   Database? _db;
-
   List<DatabaseNote> _notes = [];
 
   final _notesStreamController =
@@ -45,7 +46,6 @@ class NotesService {
   }
 
   Future<DatabaseUser> createUser({required String email}) async {
-    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final results = await db.query(userTable,
         limit: 1, where: 'email = ?', whereArgs: [email.toLowerCase()]);
@@ -58,7 +58,6 @@ class NotesService {
   }
 
   Future<DatabaseUser> getUser({required String email}) async {
-    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final results = await db.query(userTable,
         limit: 1, where: 'email = ?', whereArgs: [email.toLowerCase()]);
@@ -69,7 +68,6 @@ class NotesService {
   }
 
   Future<void> deleteUser({required String email}) async {
-    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final deletedCount = await db.delete(userTable,
         where: 'email = ?', whereArgs: [email.toLowerCase()]);
@@ -78,41 +76,36 @@ class NotesService {
     }
   }
 
-  Future<DatabaseNote> createNote({required DatabaseUser owner}) async {
-    await _ensureDbIsOpen();
+  Future<DatabaseNote> createNote(
+      {required DatabaseUser owner, required Note note}) async {
     final db = _getDatabaseOrThrow();
     final dbUser = await getUser(email: owner.email);
     if (dbUser != owner) {
       throw UserCannotBeFoundException();
     }
-    const title = '';
-    const content = '';
-    const color = 0;
-    const isFavorite = 1;
-    const isSynced = 1;
     final noteId = await db.insert(noteTable, {
       userIdColumn: owner.id,
-      titleColumn: title,
-      contentColumn: content,
-      colorColumn: color,
-      isFavoriteColumn: isFavorite,
-      isSyncWithCloudColumn: isSynced
+      titleColumn: note.title,
+      contentColumn: note.content,
+      colorColumn: note.color.value,
+      isFavoriteColumn: note.isFavorite ? 1 : 0,
+      isSyncWithCloudColumn: 0
     });
-    final note = DatabaseNote(
+    final newNote = DatabaseNote(
         id: noteId,
         userId: owner.id,
-        title: title,
-        content: content,
-        isFavorite: isFavorite == 0 ? false : true,
-        color: color,
-        isSyncWithCloud: isSynced == 0 ? false : true);
-    _notes.add(note);
+        title: note.title,
+        content: note.content!,
+        isFavorite: note.isFavorite,
+        color: note.color.value,
+        isSyncWithCloud: false);
+    _notes.add(newNote);
     _notesStreamController.add(_notes);
-    return note;
+    log(newNote.toString());
+    return newNote;
   }
 
   Future<DatabaseNote> getNote({required int id}) async {
-    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final notes =
         await db.query(noteTable, limit: 1, where: 'id = ?', whereArgs: [id]);
@@ -127,24 +120,25 @@ class NotesService {
   }
 
   Future<Iterable<DatabaseNote>> getAllNotes() async {
-    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final notes = await db.query(noteTable);
     return notes.map((noteRow) => DatabaseNote.fromRow(noteRow));
   }
 
-  Future<DatabaseNote> updateNote(
-      {required DatabaseNote note, required int id}) async {
-    await _ensureDbIsOpen();
+  Future<DatabaseNote> updateNote({required Note note, required int id}) async {
     final db = _getDatabaseOrThrow();
-    final note = await getNote(id: id);
-    final updateCount = await db.update(noteTable, {
-      titleColumn: note.title,
-      contentColumn: note.content,
-      colorColumn: note.color,
-      isFavoriteColumn: note.isFavorite,
-      isSyncWithCloudColumn: note.isSyncWithCloud,
-    });
+    final existingNote = await getNote(id: id);
+    final updateCount = await db.update(
+        noteTable,
+        {
+          titleColumn: note.title,
+          contentColumn: note.content,
+          colorColumn: note.color.value,
+          isFavoriteColumn: note.isFavorite,
+          isSyncWithCloudColumn: 0,
+        },
+        where: 'id = ?',
+        whereArgs: [existingNote.id]);
     if (updateCount == 0) {
       throw NoteCannotBeUpdatedException();
     }
@@ -156,7 +150,6 @@ class NotesService {
   }
 
   Future<void> deleteNote({required int id}) async {
-    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final deletedCount =
         await db.delete(noteTable, where: 'id = ?', whereArgs: [id]);
@@ -182,19 +175,15 @@ class NotesService {
       final dbPath = join(docsPath.path, dbName);
       final db = await openDatabase(dbPath);
       _db = db;
+      // const dropNoteTable = '''
+      // DROP TABLE IF EXISTS "note";
+      // ''';
+      // await db.execute(dropNoteTable);
       await db.execute(createUserTable);
       await db.execute(createNoteTable);
       await _cacheNotes();
     } on MissingPlatformDirectoryException {
       throw UnableToGetDocumentsDirectoryException();
-    }
-  }
-
-  Future<void> _ensureDbIsOpen() async {
-    try {
-      await open();
-    } on DatabaseAlreadyOpenException {
-      //
     }
   }
 
@@ -252,9 +241,9 @@ class DatabaseNote {
         userId = map[userIdColumn] as int,
         title = map[titleColumn] as String,
         content = map[contentColumn] as String,
-        isFavorite = map[isFavoriteColumn] as bool,
+        isFavorite = map[isFavoriteColumn] as int == 1 ? true : false,
         color = map[colorColumn] as int,
-        isSyncWithCloud = map[isSyncWithCloudColumn] as bool;
+        isSyncWithCloud = map[isSyncWithCloudColumn] as int == 1 ? true : false;
 
   @override
   String toString() =>

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:mynotes/custom_widgets/notes_card.dart';
 import 'package:mynotes/custom_widgets/reused_widgets.dart';
-import 'package:mynotes/models/note.dart';
 import 'package:mynotes/services/crud/notes_service.dart';
 import 'package:mynotes/util/constants/colors.dart';
 
@@ -30,20 +29,13 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void initState() {
-    super.initState();
-    for (int i = 0; i <= 10; i++) {
-      _notes.add(NotesCard(
-          note: Note(
-              title: i < 3 ? "Hello $i" : "$i",
-              color: Colors.brown,
-              isFavorite: false)));
-    }
+    _notesService = NotesService();
+    _notesService.open();
     _isSearching = false;
     _searchController = TextEditingController();
     _filteredNotes = _notes;
     _searchController.addListener(_performSearch);
-    _notesService = NotesService();
-    _notesService.open();
+    super.initState();
   }
 
   @override
@@ -59,12 +51,12 @@ class _HomeViewState extends State<HomeView> {
     });
     await Future.delayed(const Duration(milliseconds: 500));
     setState(() {
-      _filteredNotes = _notes
-          .where((element) => element.note.title
-              .toLowerCase()
-              .contains(_searchController.text.toLowerCase()))
-          .toList();
-      _isLoading = false;
+      // _filteredNotes = _notes
+      //     .where((element) => element.note.title
+      //         .toLowerCase()
+      //         .contains(_searchController.text.toLowerCase()))
+      //     .toList();
+      // _isLoading = false;
     });
   }
 
@@ -137,7 +129,17 @@ class _HomeViewState extends State<HomeView> {
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
-                        return const Text('your notes will appear here');
+                      case ConnectionState.active:
+                        final allNotes =
+                            snapshot.data as Iterable<DatabaseNote>;
+                        return NotesCard(
+                          notes: allNotes,
+                          onTap: (note) {
+                            Navigator.of(context).pushNamed(
+                                noteEditorExistingNoteRoute,
+                                arguments: {'updatedNote': note});
+                          },
+                        );
                       default:
                         return const CircularProgressIndicator(
                           color: Colors.red,
@@ -150,31 +152,6 @@ class _HomeViewState extends State<HomeView> {
               );
           }
         });
-
-    // return _isLoading
-    //     ? const Center(
-    //         child: CircularProgressIndicator(
-    //           color: Colors.green,
-    //         ),
-    //       )
-    //     : Container(
-    //         padding: const EdgeInsets.all(10),
-    //         child: Column(
-    //           mainAxisAlignment: MainAxisAlignment.center,
-    //           children: [
-    //             const SizedBox(
-    //               height: 10.0,
-    //             ),
-    //             Expanded(
-    //               child: GridView.count(
-    //                 crossAxisCount: 2,
-    //                 shrinkWrap: true,
-    //                 children: _filteredNotes,
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //       );
   }
 
   Future<bool> _showLogOutDialog(BuildContext context) {
@@ -228,10 +205,8 @@ class _HomeViewState extends State<HomeView> {
       backgroundColor: CustomColors.primary,
       onPressed: () {
         SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-          Navigator.of(context).pushNamed(noteEditorRoute);
+          Navigator.of(context).pushNamed(noteEditorNewNoteRoute);
         });
-        _notes.add(NotesCard(
-            note: Note(title: "Hello", color: Colors.red, isFavorite: true)));
       },
       tooltip: 'Add a new note',
       child: const Icon(

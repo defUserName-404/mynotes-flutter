@@ -1,31 +1,42 @@
 import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/custom_widgets/textfield.dart';
 import 'package:mynotes/models/note.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
+import 'package:mynotes/services/crud/notes_service.dart';
 import 'package:mynotes/util/constants/colors.dart';
 
 import '../custom_widgets/icon.dart';
+import '../util/constants/note_editing_mode.dart';
 
 class NoteEditorView extends StatefulWidget {
-  const NoteEditorView({super.key});
+  final NoteEditingMode noteEditingMode;
+
+  const NoteEditorView({super.key, required this.noteEditingMode});
 
   @override
   State<NoteEditorView> createState() => _NoteEditorViewState();
 }
 
 class _NoteEditorViewState extends State<NoteEditorView> {
-  late final TextEditingController _titleController;
-  late final TextEditingController _contentController;
+  DatabaseNote? _passedNote;
+  late final NotesService _notesService;
+  TextEditingController? _titleController;
+  TextEditingController? _contentController;
   late bool _isFavorite;
   late Color _backgroundColor;
+  late final NoteEditingMode _noteEditingMode;
 
   @override
   void initState() {
+    _notesService = NotesService();
+    _notesService.open();
+    _noteEditingMode = widget.noteEditingMode;
     _titleController = TextEditingController();
     _contentController = TextEditingController();
     _isFavorite = false;
+    // TODO: finding the alternative of the use of window
     _backgroundColor =
         WidgetsBinding.instance.window.platformBrightness == Brightness.light
             ? CustomColors.light
@@ -34,9 +45,26 @@ class _NoteEditorViewState extends State<NoteEditorView> {
   }
 
   @override
+  void didChangeDependencies() {
+    if (_noteEditingMode == NoteEditingMode.exitingNote) {
+      final arguments = (ModalRoute.of(context)?.settings.arguments ??
+          <String, DatabaseNote>{}) as Map<String, DatabaseNote>;
+      _passedNote = arguments['updatedNote'];
+      setState(() {
+        _titleController = TextEditingController(text: _passedNote!.title);
+        _contentController = TextEditingController(text: _passedNote!.content);
+        _isFavorite = _passedNote!.isFavorite;
+        _backgroundColor = Color(_passedNote!.color);
+      });
+    }
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
-    _titleController.dispose();
-    _contentController.dispose();
+    _titleController!.dispose();
+    _contentController!.dispose();
+    _notesService.close();
     super.dispose();
   }
 
@@ -53,17 +81,13 @@ class _NoteEditorViewState extends State<NoteEditorView> {
 
   PreferredSizeWidget _appBar() {
     return AppBar(
-      leading: IconButton(
-        onPressed: () {
-          Navigator.maybePop(context);
-        },
-        icon: const AppIcon(icon: Icons.arrow_back_ios_rounded),
-      ),
+      leading: const BackButton(),
       actions: [
         IconButton(
-          icon: const AppIcon(icon: Icons.delete),
-          onPressed: () {},
-        ),
+            icon: const AppIcon(icon: Icons.delete),
+            onPressed: () async {
+              _notesService.deleteNote(id: _passedNote!.id);
+            }),
         IconButton(
           icon: _isFavorite
               ? const AppIcon(icon: Icons.favorite_rounded)
@@ -77,13 +101,16 @@ class _NoteEditorViewState extends State<NoteEditorView> {
         IconButton(
             onPressed: () async {
               final note = Note(
-                  title: _titleController.text,
-                  content: _contentController.text,
+                  title: _titleController!.text,
+                  content: _contentController!.text,
                   color: _backgroundColor,
                   isFavorite: _isFavorite);
-              log(note.toString());
-              print(note.toJson());
-              await addNoteToFirestore(note); // await addNoteToFirestore(note);
+              final pushedNoteInDatabase =
+                  _noteEditingMode == NoteEditingMode.newNote
+                      ? await _createNewNote(note)
+                      : await _updateExistingNote(note, _passedNote!.id);
+              log(pushedNoteInDatabase.toString());
+              if (context.mounted) Navigator.maybePop(context);
             },
             icon: const AppIcon(icon: Icons.check))
       ],
@@ -98,13 +125,13 @@ class _NoteEditorViewState extends State<NoteEditorView> {
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: AppTextField(
-                  controller: _titleController,
+                  controller: _titleController!,
                   hintText: 'Title',
                   labelText: ''),
             ),
             Expanded(
               child: AppTextField(
-                  controller: _contentController,
+                  controller: _contentController!,
                   hintText: 'Start typing your note here',
                   expands: true,
                   maxLines: null,
@@ -136,14 +163,13 @@ class _NoteEditorViewState extends State<NoteEditorView> {
     );
   }
 
-  Future<void> addNoteToFirestore(Note note) async {
-    // Get a reference to the Firestore collection
-    final collectionRef = FirebaseFirestore.instance.collection('notes');
+  Future<DatabaseNote> _createNewNote(Note newNote) async {
+    final email = AppAuthService.firebase().currentUser!.email;
+    final owner = await _notesService.getUser(email: email);
+    return await _notesService.createNote(owner: owner, note: newNote);
+  }
 
-    // Add the note data to the collection
-    await collectionRef.add(note.toJson());
-
-    // Optionally, handle success or error scenarios
-    log('Note added');
+  Future<DatabaseNote> _updateExistingNote(Note updatedNote, int id) async {
+    return await _notesService.updateNote(note: updatedNote, id: id);
   }
 }

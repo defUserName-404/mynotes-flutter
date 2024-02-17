@@ -1,92 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:mynotes/custom_widgets/reused_widgets.dart';
-import 'package:mynotes/models/note.dart';
+import 'package:getwidget/getwidget.dart';
+import 'package:mynotes/util/constants/colors.dart';
 
-import '../util/constants/routes.dart';
-import 'icon.dart';
+import '../services/crud/notes_service.dart';
 
-class NotesCard extends StatefulWidget {
-  final Note note;
+typedef NoteCallback = void Function(DatabaseNote note);
 
-  const NotesCard({super.key, required this.note});
+class NotesCard extends StatelessWidget {
+  final Iterable<DatabaseNote> notes;
+  final NoteCallback onTap;
 
-  @override
-  State<NotesCard> createState() => _NotesCardState();
-}
-
-class _NotesCardState extends State<NotesCard> {
-  late bool _isFavoriteSelected;
-
-  @override
-  void initState() {
-    _isFavoriteSelected = widget.note.isFavorite;
-    super.initState();
-  }
-
-  void _onLikePressed() {
-    setState(() {
-      _isFavoriteSelected = !_isFavoriteSelected;
-    });
-
-    showToast('Like pressed');
-  }
-
-  void _onEditPressed() {
-    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      Navigator.of(context).pushNamed(noteEditorRoute);
-    });
-  }
-
-  void _onDeletePressed() {
-    showToast('Delete pressed');
-  }
+  const NotesCard({super.key, required this.notes, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: widget.note.color,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.note.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  if (widget.note.content != null) Text(widget.note.content!),
-                  const SizedBox(height: 10.0),
-                ],
+    return GridView.builder(
+      itemCount: notes.length,
+      gridDelegate:
+          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+      itemBuilder: (BuildContext context, int index) {
+        final note = notes.elementAt(index);
+        return GestureDetector(
+          onTap: () => onTap(note),
+          child: GFCard(
+              padding: const EdgeInsets.all(2.0),
+              margin: const EdgeInsets.all(8.0),
+              color: Color(note.color),
+              elevation: 20,
+              title: GFListTile(
+                margin: const EdgeInsets.all(4.0),
+                padding: const EdgeInsets.all(2.0),
+                avatar: const Icon(Icons.note),
+                title: Text(
+                  note.title,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: CustomColors.onPrimary),
+                ),
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  IconButton(
-                    icon: const AppIcon(icon: Icons.edit_note_rounded),
-                    onPressed: _onEditPressed,
-                  ),
-                  IconButton(
-                    icon: _isFavoriteSelected
-                        ? const AppIcon(icon: Icons.favorite_rounded)
-                        : const AppIcon(icon: Icons.favorite_outline_rounded),
-                    onPressed: _onLikePressed,
-                  ),
-                  IconButton(
-                      onPressed: _onDeletePressed,
-                      icon: const AppIcon(icon: Icons.delete))
-                ],
+              titlePosition: GFPosition.start,
+              content: Container(
+                alignment: Alignment.topLeft,
+                margin: const EdgeInsets.all(4.0),
+                padding: const EdgeInsets.all(4.0), // Adjust padding as needed
+                child: Text(
+                  note.content,
+                  maxLines: 5,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
+              clipBehavior: Clip.antiAlias),
+        );
+      },
     );
   }
 }
