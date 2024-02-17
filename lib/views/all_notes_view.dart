@@ -5,8 +5,8 @@ import '../custom_widgets/notes_card.dart';
 import '../services/auth/auth_service.dart';
 import '../util/constants/routes.dart';
 
-class AllNotesHomeView extends StatelessWidget {
-  AllNotesHomeView({super.key});
+class AllNotesView extends StatelessWidget {
+  AllNotesView({super.key});
 
   final NotesService _notesService = NotesService();
 
