@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:mynotes/custom_widgets/notes_card.dart';
 import 'package:mynotes/custom_widgets/reused_widgets.dart';
 import 'package:mynotes/services/crud/notes_service.dart';
 import 'package:mynotes/util/constants/colors.dart';
+import 'package:mynotes/views/all_notes_view.dart';
+import 'package:mynotes/views/favorite_notes_view.dart';
 
 import '../custom_widgets/button.dart';
 import '../custom_widgets/icon.dart';
@@ -17,24 +18,20 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _HomeViewState extends State<HomeView>
+    with SingleTickerProviderStateMixin {
   late bool _isSearching;
+  late final TabController _tabController;
   late final TextEditingController _searchController;
-  final List<NotesCard> _notes = [];
-  List<NotesCard> _filteredNotes = [];
-  bool _isLoading = false;
   late final NotesService _notesService;
-
-  String get userEmail => AppAuthService.firebase().currentUser!.email;
 
   @override
   void initState() {
     _notesService = NotesService();
     _notesService.open();
     _isSearching = false;
+    _tabController = TabController(length: 2, vsync: this);
     _searchController = TextEditingController();
-    _filteredNotes = _notes;
-    _searchController.addListener(_performSearch);
     super.initState();
   }
 
@@ -45,36 +42,20 @@ class _HomeViewState extends State<HomeView> {
     super.dispose();
   }
 
-  Future<void> _performSearch() async {
-    setState(() {
-      _isLoading = true;
-    });
-    await Future.delayed(const Duration(milliseconds: 500));
-    setState(() {
-      // _filteredNotes = _notes
-      //     .where((element) => element.note.title
-      //         .toLowerCase()
-      //         .contains(_searchController.text.toLowerCase()))
-      //     .toList();
-      // _isLoading = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: _appBar(),
         body: _body(),
-        bottomNavigationBar: _bottomNavBar(),
         floatingActionButton: _fab(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
 
   PreferredSizeWidget _appBar() {
     return AppBar(
+      bottom: _tabBar(),
       title: _isSearching
           ? TextField(
               controller: _searchController,
@@ -119,39 +100,10 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _body() {
-    return FutureBuilder(
-        future: _notesService.getOrCreateUser(email: userEmail),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return StreamBuilder(
-                  stream: _notesService.allNotes,
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                      case ConnectionState.active:
-                        final allNotes =
-                            snapshot.data as Iterable<DatabaseNote>;
-                        return NotesCard(
-                          notes: allNotes,
-                          onTap: (note) {
-                            Navigator.of(context).pushNamed(
-                                noteEditorExistingNoteRoute,
-                                arguments: {'updatedNote': note});
-                          },
-                        );
-                      default:
-                        return const CircularProgressIndicator(
-                          color: Colors.red,
-                        );
-                    }
-                  });
-            default:
-              return const CircularProgressIndicator(
-                color: Colors.green,
-              );
-          }
-        });
+    return TabBarView(
+      controller: _tabController,
+      children: [AllNotesHomeView(), FavoriteNotesHomeView()],
+    );
   }
 
   Future<bool> _showLogOutDialog(BuildContext context) {
@@ -185,18 +137,18 @@ class _HomeViewState extends State<HomeView> {
         }).then((value) => value ?? false);
   }
 
-  Widget _bottomNavBar() {
-    return BottomAppBar(
-      shape: const CircularNotchedRectangle(),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          IconButton(onPressed: () {}, icon: const AppIcon(icon: Icons.home)),
-          IconButton(
-              onPressed: () {},
-              icon: const AppIcon(icon: Icons.favorite_rounded))
-        ],
-      ),
+  PreferredSizeWidget _tabBar() {
+    return TabBar(
+      indicatorSize: TabBarIndicatorSize.tab,
+      tabs: const [
+        Tab(
+          icon: AppIcon(icon: Icons.home),
+        ),
+        Tab(
+          icon: AppIcon(icon: Icons.favorite),
+        )
+      ],
+      controller: _tabController,
     );
   }
 
