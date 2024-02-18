@@ -140,6 +140,7 @@ class _HomeViewState extends State<HomeView>
   PreferredSizeWidget _tabBar() {
     return TabBar(
       indicatorSize: TabBarIndicatorSize.tab,
+      indicatorColor: CustomColors.primary,
       tabs: const [
         Tab(
           icon: AppIcon(icon: Icons.home),
