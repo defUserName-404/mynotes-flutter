@@ -85,7 +85,7 @@ class _NoteEditorViewState extends State<NoteEditorView> {
     return AppBar(
       leading: const BackButton(),
       actions: [
-        if (_noteEditingMode == NoteEditingMode.exitingNote)
+        if (_noteEditingMode == NoteEditingMode.exitingNote) ...[
           IconButton(
               icon: const AppIcon(icon: Icons.delete),
               onPressed: () async {
@@ -95,6 +95,7 @@ class _NoteEditorViewState extends State<NoteEditorView> {
                   if (context.mounted) Navigator.maybePop(context);
                 }
               }),
+        ],
         IconButton(
           icon: _isFavorite
               ? const AppIcon(icon: Icons.favorite_rounded)
