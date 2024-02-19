@@ -38,16 +38,14 @@ class _NoteEditorViewState extends State<NoteEditorView> {
     _titleController = TextEditingController();
     _contentController = TextEditingController();
     _isFavorite = false;
-    // TODO: finding the alternative of the use of window
-    _backgroundColor =
-        WidgetsBinding.instance.window.platformBrightness == Brightness.light
-            ? CustomColors.light
-            : CustomColors.dark;
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
+    _backgroundColor = Theme.of(context).brightness == Brightness.light
+        ? CustomColors.light
+        : CustomColors.dark;
     if (_noteEditingMode == NoteEditingMode.exitingNote) {
       final arguments = (ModalRoute.of(context)?.settings.arguments ??
           <String, DatabaseNote>{}) as Map<String, DatabaseNote>;
