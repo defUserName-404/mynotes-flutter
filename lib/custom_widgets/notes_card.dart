@@ -30,7 +30,10 @@ class NotesCard extends StatelessWidget {
               title: GFListTile(
                 margin: const EdgeInsets.all(4.0),
                 padding: const EdgeInsets.all(2.0),
-                avatar: const Icon(Icons.note),
+                avatar: const Icon(
+                  Icons.note,
+                  color: CustomColors.onPrimary,
+                ),
                 title: Text(
                   note.title,
                   textAlign: TextAlign.center,
@@ -50,6 +53,7 @@ class NotesCard extends StatelessWidget {
                   note.content,
                   maxLines: 5,
                   overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: CustomColors.light),
                 ),
               ),
               clipBehavior: Clip.antiAlias),

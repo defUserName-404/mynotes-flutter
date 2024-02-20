@@ -38,14 +38,12 @@ class _NoteEditorViewState extends State<NoteEditorView> {
     _titleController = TextEditingController();
     _contentController = TextEditingController();
     _isFavorite = false;
+    _backgroundColor = colorSwatchForNote[0];
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    _backgroundColor = Theme.of(context).brightness == Brightness.light
-        ? CustomColors.light
-        : CustomColors.dark;
     if (_noteEditingMode == NoteEditingMode.exitingNote) {
       final arguments = (ModalRoute.of(context)?.settings.arguments ??
           <String, DatabaseNote>{}) as Map<String, DatabaseNote>;
@@ -133,12 +131,18 @@ class _NoteEditorViewState extends State<NoteEditorView> {
               child: AppTextField(
                   controller: _titleController!,
                   hintText: 'Title',
+                  borderColor: Theme.of(context).brightness == Brightness.dark
+                      ? CustomColors.dark
+                      : CustomColors.light,
                   labelText: ''),
             ),
             Expanded(
               child: AppTextField(
                   controller: _contentController!,
                   hintText: 'Start typing your note here',
+                  borderColor: Theme.of(context).brightness == Brightness.dark
+                      ? CustomColors.dark
+                      : CustomColors.light,
                   expands: true,
                   maxLines: null,
                   keyboardType: TextInputType.multiline,

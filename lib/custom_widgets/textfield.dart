@@ -8,6 +8,7 @@ class AppTextField extends StatelessWidget {
   final String labelText;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
+  final Color borderColor;
   final bool obscureText;
   final bool enableSuggestions;
   final bool autoCorrect;
@@ -26,7 +27,8 @@ class AppTextField extends StatelessWidget {
       this.enableSuggestions = true,
       this.expands = false,
       this.maxLines = 1,
-      this.autoCorrect = true});
+      this.autoCorrect = true,
+      this.borderColor = CustomColors.primary});
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +44,10 @@ class AppTextField extends StatelessWidget {
         floatingLabelAlignment: FloatingLabelAlignment.center,
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4.0),
-            borderSide:
-                const BorderSide(color: CustomColors.primary, width: 1)),
+            borderSide: BorderSide(color: borderColor, width: 1)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4.0),
-            borderSide:
-                const BorderSide(color: CustomColors.primary, width: 3)),
+            borderSide: BorderSide(color: borderColor, width: 3)),
         prefixIcon: _getColoredIcon(prefixIcon),
         suffixIcon: _getColoredIcon(suffixIcon),
       ),

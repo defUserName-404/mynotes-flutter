@@ -101,7 +101,6 @@ class NotesService {
         isSyncWithCloud: false);
     _notes.add(newNote);
     _notesStreamController.add(_notes);
-    log(newNote.toString());
     return newNote;
   }
 
