@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:mynotes/extensions/filter.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -19,23 +19,39 @@ class NotesService {
 
   Database? _db;
   List<DatabaseNote> _notes = [];
+  DatabaseUser? _user;
 
   final _notesStreamController =
       StreamController<List<DatabaseNote>>.broadcast();
 
-  Future<DatabaseUser> getOrCreateUser({required String email}) async {
+  Future<DatabaseUser> getOrCreateUser(
+      {required String email, bool setAsCurrentUser = true}) async {
     try {
       final user = await getUser(email: email);
+      if (setAsCurrentUser) {
+        _user = user;
+      }
       return user;
     } on UserCannotBeFoundException {
       final createdUser = await createUser(email: email);
+      if (setAsCurrentUser) {
+        _user = createdUser;
+      }
       return createdUser;
     } catch (error) {
       rethrow;
     }
   }
 
-  Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
+  Stream<List<DatabaseNote>> get allNotes =>
+      _notesStreamController.stream.filter((note) {
+        final currentUser = _user;
+        if (currentUser != null) {
+          return note.userId == currentUser.id;
+        } else {
+          throw UserShouldBeSetReadingAllNotes();
+        }
+      });
 
   Database _getDatabaseOrThrow() {
     final db = _db;
@@ -174,10 +190,6 @@ class NotesService {
       final dbPath = join(docsPath.path, dbName);
       final db = await openDatabase(dbPath);
       _db = db;
-      // const dropNoteTable = '''
-      // DROP TABLE IF EXISTS "note";
-      // ''';
-      // await db.execute(dropNoteTable);
       await db.execute(createUserTable);
       await db.execute(createNoteTable);
       await _cacheNotes();
@@ -284,3 +296,7 @@ const createNoteTable = '''CREATE TABLE IF NOT EXISTS "note"(
         PRIMARY KEY("id" AUTOINCREMENT),
         FOREIGN KEY("user_id") REFERENCES "user"("id")
       );''';
+
+const dropNoteTable = '''
+      DROP TABLE IF EXISTS "note";
+''';
