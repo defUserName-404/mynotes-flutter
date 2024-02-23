@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:mynotes/util/constants/colors.dart';
 
-import '../services/crud/notes_service.dart';
+import '../services/crud/database_note.dart';
 
 typedef NoteCallback = void Function(DatabaseNote note);
 

@@ -10,6 +10,7 @@ import 'package:mynotes/util/constants/colors.dart';
 import '../custom_widgets/button.dart';
 import '../custom_widgets/icon.dart';
 import '../custom_widgets/reused_widgets.dart';
+import '../services/crud/database_note.dart';
 import '../util/constants/note_editing_mode.dart';
 
 class NoteEditorView extends StatefulWidget {

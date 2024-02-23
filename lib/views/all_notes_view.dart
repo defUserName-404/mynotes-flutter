@@ -3,6 +3,7 @@ import 'package:mynotes/services/crud/notes_service.dart';
 
 import '../custom_widgets/notes_card.dart';
 import '../services/auth/auth_service.dart';
+import '../services/crud/database_note.dart';
 import '../util/constants/routes.dart';
 
 class AllNotesView extends StatelessWidget {
