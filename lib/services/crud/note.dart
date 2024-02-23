@@ -1,12 +1,12 @@
 import 'dart:ui';
 
-class Note {
+class NoteDto {
   final String title;
   String? content;
   final Color color;
   final bool isFavorite;
 
-  Note(
+  NoteDto(
       {required this.title,
       this.content,
       required this.color,
@@ -26,7 +26,7 @@ class Note {
     };
   }
 
-  factory Note.fromJson(Map<String, dynamic> json) => Note(
+  factory NoteDto.fromJson(Map<String, dynamic> json) => NoteDto(
         title: json['title'],
         content: json['content'] ?? '',
         color: Color(json['color']),

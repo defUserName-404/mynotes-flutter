@@ -5,7 +5,7 @@ import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../models/note.dart';
+import 'note.dart';
 import 'constants.dart';
 import 'crud_exceptions.dart';
 import 'database_note.dart';
@@ -94,7 +94,7 @@ class NotesService {
   }
 
   Future<DatabaseNote> createNote(
-      {required DatabaseUser owner, required Note note}) async {
+      {required DatabaseUser owner, required NoteDto note}) async {
     final db = _getDatabaseOrThrow();
     final dbUser = await getUser(email: owner.email);
     if (dbUser != owner) {
@@ -141,7 +141,7 @@ class NotesService {
     return notes.map((noteRow) => DatabaseNote.fromRow(noteRow));
   }
 
-  Future<DatabaseNote> updateNote({required Note note, required int id}) async {
+  Future<DatabaseNote> updateNote({required NoteDto note, required int id}) async {
     final db = _getDatabaseOrThrow();
     final existingNote = await getNote(id: id);
     final updateCount = await db.update(

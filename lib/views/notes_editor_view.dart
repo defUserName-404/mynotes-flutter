@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:mynotes/custom_widgets/textfield.dart';
-import 'package:mynotes/models/note.dart';
+import 'package:mynotes/services/crud/note.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/crud/notes_service.dart';
 import 'package:mynotes/util/constants/colors.dart';
@@ -105,7 +105,7 @@ class _NoteEditorViewState extends State<NoteEditorView> {
         ),
         IconButton(
             onPressed: () async {
-              final note = Note(
+              final note = NoteDto(
                   title: _titleController!.text,
                   content: _contentController!.text,
                   color: _backgroundColor,
@@ -174,13 +174,13 @@ class _NoteEditorViewState extends State<NoteEditorView> {
     );
   }
 
-  Future<DatabaseNote> _createNewNote(Note newNote) async {
+  Future<DatabaseNote> _createNewNote(NoteDto newNote) async {
     final email = AppAuthService.firebase().currentUser!.email;
     final owner = await _notesService.getUser(email: email);
     return await _notesService.createNote(owner: owner, note: newNote);
   }
 
-  Future<DatabaseNote> _updateExistingNote(Note updatedNote, int noteId) async {
+  Future<DatabaseNote> _updateExistingNote(NoteDto updatedNote, int noteId) async {
     return await _notesService.updateNote(note: updatedNote, id: noteId);
   }
 
