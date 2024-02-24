@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:getwidget/getwidget.dart';
 import 'package:mynotes/services/crud/notes_service.dart';
 
 import '../custom_widgets/notes_card.dart';
@@ -16,37 +17,43 @@ class AllNotesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _notesService.getOrCreateUser(email: userEmail),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return StreamBuilder(
-                  stream: _notesService.allNotes,
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                      case ConnectionState.active:
-                        final allNotes =
-                            snapshot.data as Iterable<DatabaseNote>;
-                        return NotesCard(
-                          notes: allNotes,
-                          onTap: (note) {
-                            Navigator.of(context).pushNamed(
-                                noteEditorExistingNoteRoute,
-                                arguments: {'updatedNote': note});
-                          },
-                        );
-                      default:
-                        return const CircularProgressIndicator(
-                          color: Colors.red,
-                        );
+      future: _notesService.getOrCreateUser(email: userEmail),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.done:
+            return StreamBuilder(
+              stream: _notesService.allNotes,
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                  case ConnectionState.active:
+                    if (snapshot.hasData) {
+                      final allNotes = snapshot.data as List<DatabaseNote>;
+                      return NotesCard(
+                        notes: allNotes,
+                        onTap: (note) {
+                          Navigator.of(context).pushNamed(
+                            noteEditorExistingNoteRoute,
+                            arguments: {'updatedNote': note},
+                          );
+                        },
+                      );
+                    } else {
+                      return GFProgressBar(
+                        animation: true,
+                        percentage: 1,
+                        leading: const Text('Loading'),
+                      );
                     }
-                  });
-            default:
-              return const CircularProgressIndicator(
-                color: Colors.green,
-              );
-          }
-        });
+                  default:
+                    return const CircularProgressIndicator();
+                }
+              },
+            );
+          default:
+            return const CircularProgressIndicator();
+        }
+      },
+    );
   }
 }

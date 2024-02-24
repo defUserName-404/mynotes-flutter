@@ -16,14 +16,19 @@ class NotesService {
 
   factory NotesService() => _shared;
 
-  NotesService._sharedInstance();
+  NotesService._sharedInstance() {
+    _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
+      onListen: () {
+        _notesStreamController.sink.add(_notes);
+      },
+    );
+  }
 
   Database? _db;
   List<DatabaseNote> _notes = [];
   DatabaseUser? _user;
 
-  final _notesStreamController =
-      StreamController<List<DatabaseNote>>.broadcast();
+  late final StreamController<List<DatabaseNote>> _notesStreamController;
 
   Future<DatabaseUser> getOrCreateUser(
       {required String email, bool setAsCurrentUser = true}) async {
@@ -135,13 +140,14 @@ class NotesService {
     return note;
   }
 
-  Future<Iterable<DatabaseNote>> getAllNotes() async {
+  Future<Iterable<DatabaseNote>> _getAllNotes() async {
     final db = _getDatabaseOrThrow();
     final notes = await db.query(noteTable);
     return notes.map((noteRow) => DatabaseNote.fromRow(noteRow));
   }
 
-  Future<DatabaseNote> updateNote({required NoteDto note, required int id}) async {
+  Future<DatabaseNote> updateNote(
+      {required NoteDto note, required int id}) async {
     final db = _getDatabaseOrThrow();
     final existingNote = await getNote(id: id);
     final updateCount = await db.update(
@@ -177,7 +183,7 @@ class NotesService {
   }
 
   Future<void> _cacheNotes() async {
-    final allNotes = await getAllNotes();
+    final allNotes = await _getAllNotes();
     _notes = allNotes.toList();
     _notesStreamController.add(_notes);
   }
