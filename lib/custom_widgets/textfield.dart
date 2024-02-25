@@ -9,11 +9,13 @@ class AppTextField extends StatelessWidget {
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final Color borderColor;
+  final FocusNode? focusNode;
   final bool obscureText;
   final bool enableSuggestions;
   final bool autoCorrect;
   final int? maxLines;
   final bool expands;
+  final Function? onTap;
 
   const AppTextField(
       {super.key,
@@ -28,35 +30,38 @@ class AppTextField extends StatelessWidget {
       this.expands = false,
       this.maxLines = 1,
       this.autoCorrect = true,
-      this.borderColor = CustomColors.primary});
+      this.borderColor = CustomColors.primary,
+      this.focusNode,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      textAlignVertical: TextAlignVertical.top,
-      decoration: InputDecoration(
-        hintText: hintText,
-        labelText: labelText,
-        labelStyle: const TextStyle(
-            fontWeight: FontWeight.bold, color: CustomColors.primary),
-        floatingLabelAlignment: FloatingLabelAlignment.center,
-        enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(4.0),
-            borderSide: BorderSide(color: borderColor, width: 1)),
-        focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(4.0),
-            borderSide: BorderSide(color: borderColor, width: 3)),
-        prefixIcon: _getColoredIcon(prefixIcon),
-        suffixIcon: _getColoredIcon(suffixIcon),
-      ),
-      obscureText: obscureText,
-      enableSuggestions: enableSuggestions,
-      autocorrect: autoCorrect,
-      expands: expands,
-      maxLines: maxLines,
-    );
+        controller: controller,
+        keyboardType: keyboardType,
+        textAlignVertical: TextAlignVertical.top,
+        focusNode: focusNode,
+        decoration: InputDecoration(
+          hintText: hintText,
+          labelText: labelText,
+          labelStyle: const TextStyle(
+              fontWeight: FontWeight.bold, color: CustomColors.primary),
+          floatingLabelAlignment: FloatingLabelAlignment.center,
+          enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4.0),
+              borderSide: BorderSide(color: borderColor, width: 1)),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4.0),
+              borderSide: BorderSide(color: borderColor, width: 3)),
+          prefixIcon: _getColoredIcon(prefixIcon),
+          suffixIcon: _getColoredIcon(suffixIcon),
+        ),
+        obscureText: obscureText,
+        enableSuggestions: enableSuggestions,
+        autocorrect: autoCorrect,
+        expands: expands,
+        maxLines: maxLines,
+        onTap: onTap != null ? onTap!() : null);
   }
 
   Widget? _getColoredIcon(Widget? icon) {

@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:mynotes/custom_widgets/reused_widgets.dart';
-import 'package:mynotes/services/crud/notes_service.dart';
 import 'package:mynotes/util/constants/colors.dart';
 import 'package:mynotes/views/all_notes_view.dart';
 import 'package:mynotes/views/favorite_notes_view.dart';
@@ -22,14 +23,13 @@ class _HomeViewState extends State<HomeView>
     with SingleTickerProviderStateMixin {
   late bool _isSearching;
   late final TabController _tabController;
+  late final FocusNode _searchFocusNode;
   late final TextEditingController _searchController;
-  late final NotesService _notesService;
-
+    
   @override
   void initState() {
-    _notesService = NotesService();
-    _notesService.open();
     _isSearching = false;
+    _searchFocusNode = FocusNode();
     _tabController = TabController(length: 2, vsync: this);
     _searchController = TextEditingController();
     super.initState();
@@ -38,7 +38,8 @@ class _HomeViewState extends State<HomeView>
   @override
   void dispose() {
     _searchController.dispose();
-    _notesService.close();
+    _searchFocusNode.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -56,19 +57,20 @@ class _HomeViewState extends State<HomeView>
   PreferredSizeWidget _appBar() {
     return AppBar(
       bottom: _tabBar(),
-      title: _isSearching
-          ? TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: 'Search for notes',
-                border: InputBorder.none,
-              ),
-              autofocus: true,
-            )
-          : Text(
-              'My Notes',
-              style: Theme.of(context).textTheme.headlineLarge,
-            ),
+      title: TextField(
+        controller: _searchController,
+        decoration: const InputDecoration(
+          hintText: 'Search for notes',
+          border: InputBorder.none,
+        ),
+        autofocus: false,
+        focusNode: _searchFocusNode,
+        onTap: () {
+          setState(() {
+            _isSearching = !_isSearching;
+          });
+        },
+      ),
       actions: [
         IconButton(
           icon: AppIcon(icon: _isSearching ? Icons.close : Icons.search),
@@ -76,11 +78,14 @@ class _HomeViewState extends State<HomeView>
             setState(() => _isSearching = !_isSearching);
             if (!_isSearching) {
               _searchController.text = '';
+              _searchFocusNode.unfocus();
             }
           },
         ),
         Visibility(
           visible: !_isSearching,
+          maintainState: true,
+          maintainAnimation: true,
           child: IconButton(
             icon: const AppIcon(icon: Icons.account_circle),
             onPressed: () async {
@@ -143,9 +148,11 @@ class _HomeViewState extends State<HomeView>
       indicatorColor: CustomColors.primary,
       tabs: const [
         Tab(
+          text: 'All Notes',
           icon: AppIcon(icon: Icons.home),
         ),
         Tab(
+          text: 'Favorite Notes',
           icon: AppIcon(icon: Icons.favorite),
         )
       ],
@@ -168,4 +175,6 @@ class _HomeViewState extends State<HomeView>
       ),
     );
   }
+
+  _onTextChanged(String value) {}
 }
