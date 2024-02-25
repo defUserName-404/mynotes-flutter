@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "410095569030",
+    "project_id": "mynotes-c1350",
+    "storage_bucket": "mynotes-c1350.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:410095569030:android:b5b204c463a5063a52e907",
+        "android_client_info": {
+          "package_name": "com.defusername.mynotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzvMJXHjWZs8-LjRGW9BflJwurfsFMtQs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
