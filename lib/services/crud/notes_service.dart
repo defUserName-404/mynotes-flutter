@@ -6,7 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'note.dart';
-import 'constants.dart';
+import 'database_constants.dart';
 import 'crud_exceptions.dart';
 import 'database_note.dart';
 import 'database_user.dart';

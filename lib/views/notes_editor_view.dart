@@ -180,7 +180,8 @@ class _NoteEditorViewState extends State<NoteEditorView> {
     return await _notesService.createNote(owner: owner, note: newNote);
   }
 
-  Future<DatabaseNote> _updateExistingNote(NoteDto updatedNote, int noteId) async {
+  Future<DatabaseNote> _updateExistingNote(
+      NoteDto updatedNote, int noteId) async {
     return await _notesService.updateNote(note: updatedNote, id: noteId);
   }
 

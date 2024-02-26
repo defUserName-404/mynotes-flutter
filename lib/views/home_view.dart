@@ -25,7 +25,7 @@ class _HomeViewState extends State<HomeView>
   late final TabController _tabController;
   late final FocusNode _searchFocusNode;
   late final TextEditingController _searchController;
-    
+
   @override
   void initState() {
     _isSearching = false;
@@ -107,7 +107,7 @@ class _HomeViewState extends State<HomeView>
   Widget _body() {
     return TabBarView(
       controller: _tabController,
-      children: [AllNotesView(), FavoriteNotesView()],
+      children: [AllNotesView(), const FavoriteNotesView()],
     );
   }
 
@@ -175,6 +175,4 @@ class _HomeViewState extends State<HomeView>
       ),
     );
   }
-
-  _onTextChanged(String value) {}
 }

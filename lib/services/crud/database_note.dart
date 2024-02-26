@@ -1,4 +1,4 @@
-import 'constants.dart';
+import 'database_constants.dart';
 
 class DatabaseNote {
   final int id;
