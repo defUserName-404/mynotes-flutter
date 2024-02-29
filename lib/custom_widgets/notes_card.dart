@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:mynotes/util/constants/colors.dart';
 
-import '../services/crud/database_note.dart';
+import '../services/cloud/cloud_note.dart';
 
-typedef NoteCallback = void Function(DatabaseNote note);
+typedef NoteCallback = void Function(CloudNote note);
 
 class NotesCard extends StatelessWidget {
-  final Iterable<DatabaseNote> notes;
+  final Iterable<CloudNote> notes;
   final NoteCallback onTap;
 
   const NotesCard({super.key, required this.notes, required this.onTap});

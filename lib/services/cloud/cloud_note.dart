@@ -27,4 +27,9 @@ class CloudNote {
         content = snapshot.data()[contentFieldName],
         color = snapshot.data()[colorFieldName],
         isFavorite = snapshot.data()[isFavoriteFieldName];
+
+  @override
+  String toString() {
+    return "title = $title, content = $content, color = $color, isFavorite = $isFavorite";
+  }
 }

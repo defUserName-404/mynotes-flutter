@@ -2,13 +2,13 @@ import 'dart:ui';
 
 class NoteDto {
   final String title;
-  String? content;
+  String content;
   final Color color;
   final bool isFavorite;
 
   NoteDto(
       {required this.title,
-      this.content,
+      required this.content,
       required this.color,
       required this.isFavorite});
 

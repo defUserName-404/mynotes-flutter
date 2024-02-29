@@ -2,15 +2,15 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:mynotes/custom_widgets/textfield.dart';
+import 'package:mynotes/services/cloud/cloud_storage_service.dart';
 import 'package:mynotes/services/crud/note.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
-import 'package:mynotes/services/crud/notes_service.dart';
 import 'package:mynotes/util/constants/colors.dart';
 
 import '../custom_widgets/button.dart';
 import '../custom_widgets/icon.dart';
 import '../custom_widgets/reused_widgets.dart';
-import '../services/crud/database_note.dart';
+import '../services/cloud/cloud_note.dart';
 import '../util/constants/note_editing_mode.dart';
 
 class NoteEditorView extends StatefulWidget {
@@ -23,18 +23,17 @@ class NoteEditorView extends StatefulWidget {
 }
 
 class _NoteEditorViewState extends State<NoteEditorView> {
-  DatabaseNote? _passedNote;
-  late final NotesService _notesService;
-  TextEditingController? _titleController;
-  TextEditingController? _contentController;
+  CloudNote? _passedNote;
+  late final CloudStorageService _notesService;
+  late TextEditingController _titleController;
+  late TextEditingController _contentController;
   late bool _isFavorite;
   late Color _backgroundColor;
   late final NoteEditingMode _noteEditingMode;
 
   @override
   void initState() {
-    _notesService = NotesService();
-    _notesService.open();
+    _notesService = CloudStorageService();
     _noteEditingMode = widget.noteEditingMode;
     _titleController = TextEditingController();
     _contentController = TextEditingController();
@@ -47,11 +46,12 @@ class _NoteEditorViewState extends State<NoteEditorView> {
   void didChangeDependencies() {
     if (_noteEditingMode == NoteEditingMode.exitingNote) {
       final arguments = (ModalRoute.of(context)?.settings.arguments ??
-          <String, DatabaseNote>{}) as Map<String, DatabaseNote>;
+          <String, CloudNote>{}) as Map<String, CloudNote>;
       _passedNote = arguments['updatedNote'];
       setState(() {
         _titleController = TextEditingController(text: _passedNote!.title);
-        _contentController = TextEditingController(text: _passedNote!.content);
+        _contentController =
+            TextEditingController(text: _passedNote!.content);
         _isFavorite = _passedNote!.isFavorite;
         _backgroundColor = Color(_passedNote!.color);
       });
@@ -61,9 +61,8 @@ class _NoteEditorViewState extends State<NoteEditorView> {
 
   @override
   void dispose() {
-    _titleController!.dispose();
-    _contentController!.dispose();
-    _notesService.close();
+    _titleController.dispose();
+    _contentController.dispose();
     super.dispose();
   }
 
@@ -88,7 +87,7 @@ class _NoteEditorViewState extends State<NoteEditorView> {
               onPressed: () async {
                 final delete = await _showDeleteConfirmationDialog(context);
                 if (delete) {
-                  _deleteNote(_passedNote!.id);
+                  _deleteNote(noteId: _passedNote!.documentId);
                   if (context.mounted) Navigator.maybePop(context);
                 }
               }),
@@ -106,14 +105,16 @@ class _NoteEditorViewState extends State<NoteEditorView> {
         IconButton(
             onPressed: () async {
               final note = NoteDto(
-                  title: _titleController!.text,
-                  content: _contentController!.text,
+                  title: _titleController.text,
+                  content: _contentController.text,
                   color: _backgroundColor,
                   isFavorite: _isFavorite);
               final pushedNoteInDatabase =
                   _noteEditingMode == NoteEditingMode.newNote
-                      ? await _createNewNote(note)
-                      : await _updateExistingNote(note, _passedNote!.id);
+                      ? await _createNewNote(newNote: note)
+                      : await _updateExistingNote(
+                          updatedNote: note,
+                          noteId: _passedNote!.documentId);
               log(pushedNoteInDatabase.toString());
               if (context.mounted) Navigator.maybePop(context);
             },
@@ -130,7 +131,7 @@ class _NoteEditorViewState extends State<NoteEditorView> {
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: AppTextField(
-                  controller: _titleController!,
+                  controller: _titleController,
                   hintText: 'Title',
                   borderColor: Theme.of(context).brightness == Brightness.dark
                       ? CustomColors.dark
@@ -139,7 +140,7 @@ class _NoteEditorViewState extends State<NoteEditorView> {
             ),
             Expanded(
               child: AppTextField(
-                  controller: _contentController!,
+                  controller: _contentController,
                   hintText: 'Start typing your note here',
                   borderColor: Theme.of(context).brightness == Brightness.dark
                       ? CustomColors.dark
@@ -174,19 +175,20 @@ class _NoteEditorViewState extends State<NoteEditorView> {
     );
   }
 
-  Future<DatabaseNote> _createNewNote(NoteDto newNote) async {
-    final email = AppAuthService.firebase().currentUser!.email;
-    final owner = await _notesService.getUser(email: email);
-    return await _notesService.createNote(owner: owner, note: newNote);
+  Future<CloudNote> _createNewNote({required NoteDto newNote}) async {
+    final currentUser = AppAuthService.firebase().currentUser!;
+    return await _notesService.createNewNote(
+        ownerUserId: currentUser.id, note: newNote);
   }
 
-  Future<DatabaseNote> _updateExistingNote(
-      NoteDto updatedNote, int noteId) async {
-    return await _notesService.updateNote(note: updatedNote, id: noteId);
+  Future<CloudNote> _updateExistingNote(
+      {required NoteDto updatedNote, required String noteId}) async {
+    return await _notesService.updateNote(
+        note: updatedNote, documentId: noteId);
   }
 
-  Future<void> _deleteNote(int noteId) async {
-    _notesService.deleteNote(id: noteId);
+  Future<void> _deleteNote({required String noteId}) async {
+    _notesService.deleteNote(documentId: noteId);
   }
 
   Future<bool> _showDeleteConfirmationDialog(BuildContext context) {
