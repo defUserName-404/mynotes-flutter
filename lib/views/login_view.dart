@@ -66,6 +66,7 @@ class _LoginViewState extends State<LoginView> {
 
   PreferredSizeWidget _appBar() {
     return AppBar(
+      elevation: 10,
       title: Text(
         'Login',
         style: Theme.of(context).textTheme.headlineSmall,
@@ -75,49 +76,43 @@ class _LoginViewState extends State<LoginView> {
 
   Widget _body() {
     return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+        margin: const EdgeInsets.all(4.0),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: AppTextField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  hintText: 'Enter your email here',
-                  labelText: 'Email',
-                  prefixIcon: const Icon(Icons.email_rounded)),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: AppTextField(
-                controller: _passwordController,
-                hintText: 'Enter your password here',
-                labelText: 'Password',
-                prefixIcon: const Icon(Icons.lock),
-                suffixIcon: IconButton(
-                    icon: AppIcon(
-                        icon: _isPasswordVisible
-                            ? Icons.visibility_off
-                            : Icons.visibility),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    }),
-                obscureText: !_isPasswordVisible,
-                enableSuggestions: false,
-                autoCorrect: false,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: AppButton(
-                  text: 'Login',
-                  icon: const Icon(Icons.directions),
-                  onPressed: () async {
-                    _handleLogin();
+            const SizedBox(height: 4.0),
+            AppTextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                hintText: 'Enter your email here',
+                labelText: 'Email',
+                prefixIcon: const Icon(Icons.email_rounded)),
+            const SizedBox(height: 4.0),
+            AppTextField(
+              controller: _passwordController,
+              hintText: 'Enter your password here',
+              labelText: 'Password',
+              prefixIcon: const Icon(Icons.lock),
+              suffixIcon: IconButton(
+                  icon: AppIcon(
+                      icon: _isPasswordVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
                   }),
+              obscureText: !_isPasswordVisible,
+              enableSuggestions: false,
+              autoCorrect: false,
             ),
+            const SizedBox(height: 16.0),
+            AppButton(
+                text: 'Login',
+                icon: const Icon(Icons.directions),
+                onPressed: () async {
+                  _handleLogin();
+                }),
             AppButton(
                 text: 'Don\'t have an account? Register here!',
                 icon: const Icon(Icons.account_circle),

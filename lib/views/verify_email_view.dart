@@ -20,6 +20,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
 
   PreferredSizeWidget _appBar() {
     return AppBar(
+      elevation: 10,
       title: Text(
         'Verify Email',
         style: Theme.of(context).textTheme.headlineSmall,

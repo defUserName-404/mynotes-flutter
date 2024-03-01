@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:mynotes/custom_widgets/icon.dart';
 import 'package:mynotes/services/cloud/cloud_note.dart';
 import 'package:mynotes/services/cloud/cloud_storage_service.dart';
+import 'package:mynotes/util/constants/colors.dart';
 
 import '../custom_widgets/notes_card.dart';
 import '../services/auth/auth_service.dart';
@@ -34,10 +36,8 @@ class AllNotesView extends StatelessWidget {
                 },
               );
             } else {
-              return GFProgressBar(
-                animation: true,
-                percentage: 1,
-                leading: const Text('Loading'),
+              return const GFLoader(
+                type: GFLoaderType.square,
               );
             }
           default:

@@ -11,7 +11,7 @@ import '../custom_widgets/button.dart';
 import '../custom_widgets/icon.dart';
 import '../custom_widgets/reused_widgets.dart';
 import '../services/cloud/cloud_note.dart';
-import '../util/constants/note_editing_mode.dart';
+import '../services/cloud/note_editing_mode.dart';
 
 class NoteEditorView extends StatefulWidget {
   final NoteEditingMode noteEditingMode;
@@ -44,14 +44,13 @@ class _NoteEditorViewState extends State<NoteEditorView> {
 
   @override
   void didChangeDependencies() {
-    if (_noteEditingMode == NoteEditingMode.exitingNote) {
+    if (_noteEditingMode == NoteEditingMode.existingNote) {
       final arguments = (ModalRoute.of(context)?.settings.arguments ??
           <String, CloudNote>{}) as Map<String, CloudNote>;
       _passedNote = arguments['updatedNote'];
       setState(() {
         _titleController = TextEditingController(text: _passedNote!.title);
-        _contentController =
-            TextEditingController(text: _passedNote!.content);
+        _contentController = TextEditingController(text: _passedNote!.content);
         _isFavorite = _passedNote!.isFavorite;
         _backgroundColor = Color(_passedNote!.color);
       });
@@ -80,8 +79,9 @@ class _NoteEditorViewState extends State<NoteEditorView> {
   PreferredSizeWidget _appBar() {
     return AppBar(
       leading: const BackButton(),
+      elevation: 10,
       actions: [
-        if (_noteEditingMode == NoteEditingMode.exitingNote) ...[
+        if (_noteEditingMode == NoteEditingMode.existingNote) ...[
           IconButton(
               icon: const AppIcon(icon: Icons.delete),
               onPressed: () async {
@@ -113,8 +113,7 @@ class _NoteEditorViewState extends State<NoteEditorView> {
                   _noteEditingMode == NoteEditingMode.newNote
                       ? await _createNewNote(newNote: note)
                       : await _updateExistingNote(
-                          updatedNote: note,
-                          noteId: _passedNote!.documentId);
+                          updatedNote: note, noteId: _passedNote!.documentId);
               log(pushedNoteInDatabase.toString());
               if (context.mounted) Navigator.maybePop(context);
             },

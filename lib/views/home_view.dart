@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:getwidget/components/appbar/gf_appbar.dart';
 import 'package:mynotes/custom_widgets/reused_widgets.dart';
 import 'package:mynotes/util/constants/colors.dart';
 import 'package:mynotes/views/all_notes_view.dart';
@@ -56,12 +58,23 @@ class _HomeViewState extends State<HomeView>
 
   PreferredSizeWidget _appBar() {
     return AppBar(
+      elevation: 10,
+      flexibleSpace: Container(
+        height: AppBar().preferredSize.height,
+        margin: const EdgeInsets.all(4.0),
+        decoration: BoxDecoration(
+          border: Border.all(
+              color: CustomColors.primary, width: _isSearching ? 3.0 : 1.0),
+          borderRadius: const BorderRadius.all(Radius.circular(4.0)),
+        ),
+      ),
       bottom: _tabBar(),
       title: TextField(
         controller: _searchController,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           hintText: 'Search for notes',
           border: InputBorder.none,
+          prefixIcon: AppIcon(icon: _isSearching ? Icons.close : Icons.search),
         ),
         autofocus: false,
         focusNode: _searchFocusNode,
@@ -69,19 +82,13 @@ class _HomeViewState extends State<HomeView>
           setState(() {
             _isSearching = !_isSearching;
           });
+          if (!_isSearching) {
+            _searchController.text = '';
+            _searchFocusNode.unfocus();
+          }
         },
       ),
       actions: [
-        IconButton(
-          icon: AppIcon(icon: _isSearching ? Icons.close : Icons.search),
-          onPressed: () {
-            setState(() => _isSearching = !_isSearching);
-            if (!_isSearching) {
-              _searchController.text = '';
-              _searchFocusNode.unfocus();
-            }
-          },
-        ),
         Visibility(
           visible: !_isSearching,
           maintainState: true,

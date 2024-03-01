@@ -1,1 +1,0 @@
-enum NoteEditingMode { newNote, exitingNote }

@@ -1,0 +1,1 @@
+enum NoteEditingMode { newNote, existingNote }
