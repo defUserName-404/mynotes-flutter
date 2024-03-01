@@ -74,7 +74,6 @@ class _RegisterViewState extends State<RegisterView> {
             'Register',
             style: Theme.of(context).textTheme.headlineSmall,
           ),
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         ),
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),

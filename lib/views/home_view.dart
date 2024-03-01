@@ -80,7 +80,6 @@ class _HomeViewState extends State<HomeView> {
                   'My Notes',
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           actions: [
             IconButton(
               icon: Icon(_isSearching ? Icons.close : Icons.search),
@@ -138,7 +137,6 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
         bottomNavigationBar: BottomAppBar(
-          color: Theme.of(context).buttonTheme.colorScheme!.inversePrimary,
           shape: const CircularNotchedRectangle(),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -152,6 +150,9 @@ class _HomeViewState extends State<HomeView> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             showToast('Hello', backgroundColor, textColor);
+            SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+              Navigator.of(context).pushNamed(noteCreateOrUpdateRoute);
+            });
             _notes.add(NotesCard(
                 note:
                     Note(title: "Hello", color: Colors.red, isFavorite: true)));

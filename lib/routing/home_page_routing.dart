@@ -11,7 +11,6 @@ class HomePageRouting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       body: FutureBuilder(
           future: AppAuthService.firebase().initialize(),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {

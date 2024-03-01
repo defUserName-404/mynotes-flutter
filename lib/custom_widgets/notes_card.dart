@@ -34,6 +34,11 @@ class _NotesCardState extends State<NotesCard> {
         msg: 'Edit pressed', backgroundColor: widget.note.color);
   }
 
+  void _onDeletePressed() {
+    Fluttertoast.showToast(
+        msg: 'Delete pressed', backgroundColor: widget.note.color);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -58,19 +63,21 @@ class _NotesCardState extends State<NotesCard> {
             Align(
               alignment: Alignment.bottomCenter,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   IconButton(
                     icon: const Icon(Icons.edit_note_rounded),
                     onPressed: _onEditPressed,
                   ),
-                  const Spacer(),
                   IconButton(
                     icon: _isFavoriteSelected
                         ? const Icon(Icons.favorite_rounded)
                         : const Icon(Icons.favorite_outline_rounded),
                     onPressed: _onLikePressed,
                   ),
+                  IconButton(
+                      onPressed: _onDeletePressed,
+                      icon: const Icon(Icons.delete))
                 ],
               ),
             ),

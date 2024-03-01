@@ -21,7 +21,6 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
             'Verify Email',
             style: Theme.of(context).textTheme.headlineSmall,
           ),
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         ),
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 20),
