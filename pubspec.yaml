@@ -52,6 +52,7 @@ dependencies:
   path_provider: ^2.1.2
   
   provider: ^6.0.0
+  share_plus: ^8.0.2
 
 dev_dependencies:
   flutter_test:

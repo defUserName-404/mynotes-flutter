@@ -117,7 +117,7 @@ class NotesService {
         id: noteId,
         userId: owner.id,
         title: note.title,
-        content: note.content!,
+        content: note.content,
         isFavorite: note.isFavorite,
         color: note.color.value,
         isSyncWithCloud: false);

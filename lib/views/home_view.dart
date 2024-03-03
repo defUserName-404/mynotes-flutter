@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:getwidget/components/appbar/gf_appbar.dart';
 import 'package:mynotes/custom_widgets/reused_widgets.dart';
 import 'package:mynotes/util/constants/colors.dart';
 import 'package:mynotes/views/all_notes_view.dart';

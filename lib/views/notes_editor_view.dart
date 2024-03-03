@@ -88,7 +88,8 @@ class _NoteEditorViewState extends State<NoteEditorView> {
                 final delete = await _showDeleteConfirmationDialog(context);
                 if (delete) {
                   _deleteNote(noteId: _passedNote!.documentId);
-                  if (context.mounted) Navigator.maybePop(context);
+                  if (!mounted) return;
+                  Navigator.maybePop(context);
                 }
               }),
         ],
@@ -102,6 +103,7 @@ class _NoteEditorViewState extends State<NoteEditorView> {
             });
           },
         ),
+        IconButton(onPressed: () {}, icon: const AppIcon(icon: Icons.share)),
         IconButton(
             onPressed: () async {
               final note = NoteDto(
@@ -115,7 +117,8 @@ class _NoteEditorViewState extends State<NoteEditorView> {
                       : await _updateExistingNote(
                           updatedNote: note, noteId: _passedNote!.documentId);
               log(pushedNoteInDatabase.toString());
-              if (context.mounted) Navigator.maybePop(context);
+              if (!mounted) return;
+              Navigator.maybePop(context);
             },
             icon: const AppIcon(icon: Icons.check))
       ],
