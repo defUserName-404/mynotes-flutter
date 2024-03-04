@@ -1,10 +1,9 @@
-import 'dart:developer' as devtools show log;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
-import 'package:mynotes/services/auth/auth_service.dart';
+import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
+import 'package:mynotes/services/auth/bloc/auth_event.dart';
 import 'package:mynotes/util/constants/routes.dart';
 
 import 'custom_widgets/button.dart';
@@ -28,14 +27,9 @@ class _LoginViewState extends State<LoginView> {
     final email = _emailController.text;
     final password = _passwordController.text;
     try {
-      final userCredentials = await AppAuthService.firebase()
-          .login(email: email, password: password);
-      devtools.log(userCredentials.toString());
-      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil(homeRoute, (route) => false);
-        showToast('Successfully logged in');
-      });
+      context
+          .read<AppAuthBloc>()
+          .add(AppAuthEventLogin(email: email, password: password));
     } on UserNotFoundAuthException {
       showToast('User not found');
     } on WrongPasswordAuthException {

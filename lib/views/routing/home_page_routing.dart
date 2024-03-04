@@ -1,50 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:getwidget/components/loader/gf_loader.dart';
 import 'package:getwidget/types/gf_loader_type.dart';
-import 'package:mynotes/services/auth/auth_service.dart';
+import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
+import 'package:mynotes/services/auth/bloc/auth_state.dart';
+import 'package:mynotes/views/home_view.dart';
+import 'package:mynotes/views/login_view.dart';
+import 'package:mynotes/views/verify_email_view.dart';
 
-import '../../util/constants/routes.dart';
+import '../../services/auth/bloc/auth_event.dart';
 
 class HomePageRouting extends StatelessWidget {
   const HomePageRouting({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder(
-          future: AppAuthService.firebase().initialize(),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                final loggedInUser = AppAuthService.firebase().currentUser;
-                if (loggedInUser == null) {
-                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil(loginRoute, (route) => false);
-                  });
-                } else {
-                  if (loggedInUser.isEmailVerified) {
-                    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil(homeRoute, (route) => false);
-                    });
-                  } else {
-                    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          verifyEmailRoute, (route) => false);
-                    });
-                  }
-                }
-                return const GFLoader(
-                  type: GFLoaderType.square,
-                );
-              default:
-                return const GFLoader(
-                  type: GFLoaderType.square,
-                );
-            }
-          }),
-    );
+    context.read<AppAuthBloc>().add(const AppAuthEventInitialize());
+    return BlocBuilder<AppAuthBloc, AppAuthState>(builder: (event, state) {
+      if (state is AppAuthStateLoggedIn) {
+        return const HomeView();
+      } else if (state is AppAuthStateNeedsEmailVerification) {
+        return const VerifyEmailView();
+      } else if (state is AppAuthStateLoggedOut) {
+        return const LoginView();
+      } else {
+        return const Scaffold(
+          body: GFLoader(
+            type: GFLoaderType.square,
+          ),
+        );
+      }
+    });
   }
 }

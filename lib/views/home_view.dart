@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
+import 'package:mynotes/services/auth/bloc/auth_event.dart';
 import 'package:mynotes/util/constants/colors.dart';
 import 'package:mynotes/views/notes_view/all_notes_view.dart';
 import 'package:mynotes/views/notes_view/favorite_notes_view.dart';
 
-import '../services/auth/auth_service.dart';
 import '../util/constants/routes.dart';
 import 'custom_widgets/button.dart';
 import 'custom_widgets/icon.dart';
@@ -92,18 +94,10 @@ class _HomeViewState extends State<HomeView>
           maintainState: true,
           maintainAnimation: true,
           child: IconButton(
-            icon: const AppIcon(icon: Icons.account_circle),
-            onPressed: () async {
-              final signOut = await _showLogOutDialog(context);
-              if (signOut) {
-                await AppAuthService.firebase().logout();
-                SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(loginRoute, (route) => false);
-                });
-              }
-            },
-          ),
+              icon: const AppIcon(icon: Icons.account_circle),
+              onPressed: () async {
+                _handleLogout();
+              }),
         ),
       ],
     );
@@ -145,6 +139,13 @@ class _HomeViewState extends State<HomeView>
             ],
           );
         }).then((value) => value ?? false);
+  }
+
+  void _handleLogout() async {
+    final shouldLogout = await _showLogOutDialog(context);
+    if (shouldLogout && mounted) {
+      context.read<AppAuthBloc>().add(const AppAuthEventLogout());
+    }
   }
 
   PreferredSizeWidget _tabBar() {
