@@ -39,7 +39,9 @@ class AllNotesView extends StatelessWidget {
               );
             }
           default:
-            return const CircularProgressIndicator();
+            return const GFLoader(
+              type: GFLoaderType.square,
+            );
         }
       },
     );

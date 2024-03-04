@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:mynotes/extensions/filter.dart';
+import 'package:mynotes/util/extensions/filter.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';

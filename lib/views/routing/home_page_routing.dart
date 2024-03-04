@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:getwidget/components/loader/gf_loader.dart';
+import 'package:getwidget/types/gf_loader_type.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 
-import '../util/constants/routes.dart';
+import '../../util/constants/routes.dart';
 
 class HomePageRouting extends StatelessWidget {
   const HomePageRouting({super.key});
@@ -35,11 +36,12 @@ class HomePageRouting extends StatelessWidget {
                     });
                   }
                 }
-                return const Column();
+                return const GFLoader(
+                  type: GFLoaderType.square,
+                );
               default:
-                return const Loader(
-                  radius: 10,
-                  color: Colors.red,
+                return const GFLoader(
+                  type: GFLoaderType.square,
                 );
             }
           }),
