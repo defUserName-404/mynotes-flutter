@@ -6,6 +6,7 @@ import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
 import 'package:mynotes/util/constants/routes.dart';
 
+import '../services/auth/bloc/auth_state.dart';
 import 'custom_widgets/button.dart';
 import 'custom_widgets/icon.dart';
 import 'custom_widgets/reused_widgets.dart';
@@ -22,22 +23,6 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
   late bool _isPasswordVisible;
-
-  Future<void> _handleLogin() async {
-    final email = _emailController.text;
-    final password = _passwordController.text;
-    try {
-      context
-          .read<AppAuthBloc>()
-          .add(AppAuthEventLogin(email: email, password: password));
-    } on UserNotFoundAuthException {
-      showToast('User not found');
-    } on WrongPasswordAuthException {
-      showToast('Wrong password entered.');
-    } on GenericAuthException {
-      showToast('Authentication error.');
-    }
-  }
 
   @override
   void initState() {
@@ -102,12 +87,28 @@ class _LoginViewState extends State<LoginView> {
               autoCorrect: false,
             ),
             const SizedBox(height: 16.0),
-            AppButton(
-                text: 'Login',
-                icon: const Icon(Icons.directions),
-                onPressed: () async {
-                  _handleLogin();
-                }),
+            BlocListener<AppAuthBloc, AppAuthState>(
+              listener: (context, state) async {
+                if (state is AppAuthStateLoggedOut) {
+                  if (state.exception is UserNotFoundAuthException) {
+                    showToast('User not found');
+                  } else if (state.exception is WrongPasswordAuthException) {
+                    showToast('Wrong password entered.');
+                  } else if (state.exception is GenericAuthException) {
+                    showToast('Authentication error.');
+                  }
+                }
+              },
+              child: AppButton(
+                  text: 'Login',
+                  icon: const Icon(Icons.directions),
+                  onPressed: () async {
+                    final email = _emailController.text;
+                    final password = _passwordController.text;
+                    context.read<AppAuthBloc>().add(
+                        AppAuthEventLogin(email: email, password: password));
+                  }),
+            ),
             AppButton(
                 text: 'Don\'t have an account? Register here!',
                 icon: const Icon(Icons.account_circle),

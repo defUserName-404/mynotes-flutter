@@ -28,7 +28,7 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
             await appAuthProvider.login(email: email, password: password);
         emit(AppAuthStateLoggedIn(user: user));
       } on Exception catch (e) {
-        emit(AppAuthStateLoginFailure(exception: e));
+        emit(AppAuthStateLoggedOut(exception: e));
       }
     });
     // ? logout

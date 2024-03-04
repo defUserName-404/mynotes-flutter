@@ -96,7 +96,10 @@ class _HomeViewState extends State<HomeView>
           child: IconButton(
               icon: const AppIcon(icon: Icons.account_circle),
               onPressed: () async {
-                _handleLogout();
+                final shouldLogout = await _showLogOutDialog(context);
+                if (shouldLogout && mounted) {
+                  context.read<AppAuthBloc>().add(const AppAuthEventLogout());
+                }
               }),
         ),
       ],
@@ -139,13 +142,6 @@ class _HomeViewState extends State<HomeView>
             ],
           );
         }).then((value) => value ?? false);
-  }
-
-  void _handleLogout() async {
-    final shouldLogout = await _showLogOutDialog(context);
-    if (shouldLogout && mounted) {
-      context.read<AppAuthBloc>().add(const AppAuthEventLogout());
-    }
   }
 
   PreferredSizeWidget _tabBar() {

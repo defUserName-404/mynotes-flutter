@@ -16,18 +16,14 @@ class AppAuthStateLoggedIn extends AppAuthState {
   const AppAuthStateLoggedIn({required this.user});
 }
 
-class AppAuthStateLoginFailure extends AppAuthState {
-  final Exception exception;
-
-  const AppAuthStateLoginFailure({required this.exception});
-}
-
 class AppAuthStateNeedsEmailVerification extends AppAuthState {
   const AppAuthStateNeedsEmailVerification();
 }
 
 class AppAuthStateLoggedOut extends AppAuthState {
-  const AppAuthStateLoggedOut();
+  final Exception? exception;
+
+  const AppAuthStateLoggedOut({this.exception});
 }
 
 class AppAuthStateLogoutFailure extends AppAuthState {
