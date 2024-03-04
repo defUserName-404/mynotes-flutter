@@ -2,14 +2,15 @@ import 'dart:developer' as devtools show log;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:mynotes/custom_widgets/reused_widgets.dart';
-import 'package:mynotes/custom_widgets/textfield.dart';
+
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/util/constants/routes.dart';
 
-import '../custom_widgets/button.dart';
-import '../custom_widgets/icon.dart';
+import 'custom_widgets/button.dart';
+import 'custom_widgets/icon.dart';
+import 'custom_widgets/reused_widgets.dart';
+import 'custom_widgets/textfield.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 
-import '../custom_widgets/button.dart';
 import '../util/constants/routes.dart';
+import 'custom_widgets/button.dart';
 
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({super.key});

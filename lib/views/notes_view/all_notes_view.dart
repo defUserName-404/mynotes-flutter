@@ -3,9 +3,9 @@ import 'package:getwidget/getwidget.dart';
 import 'package:mynotes/services/cloud/cloud_note.dart';
 import 'package:mynotes/services/cloud/cloud_storage_service.dart';
 
+import '../../services/auth/auth_service.dart';
+import '../../util/constants/routes.dart';
 import '../custom_widgets/notes_card.dart';
-import '../services/auth/auth_service.dart';
-import '../util/constants/routes.dart';
 
 class AllNotesView extends StatelessWidget {
   AllNotesView({super.key});

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mynotes/services/cloud/cloud_note.dart';
 import 'package:mynotes/services/cloud/cloud_storage_constants.dart';
 import 'package:mynotes/services/cloud/cloud_storage_exceptions.dart';
-import 'package:mynotes/services/crud/note.dart';
+import 'package:mynotes/services/crud/notes/note.dart';
 
 class CloudStorageService {
   static final CloudStorageService _shared =

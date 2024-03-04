@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:mynotes/util/constants/colors.dart';
 
-import '../services/cloud/cloud_note.dart';
+import '../../services/cloud/cloud_note.dart';
 
 typedef NoteCallback = void Function(CloudNote note);
 

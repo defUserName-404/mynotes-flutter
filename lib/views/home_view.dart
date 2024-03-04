@@ -2,15 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:mynotes/custom_widgets/reused_widgets.dart';
 import 'package:mynotes/util/constants/colors.dart';
-import 'package:mynotes/views/all_notes_view.dart';
-import 'package:mynotes/views/favorite_notes_view.dart';
+import 'package:mynotes/views/notes_view/all_notes_view.dart';
+import 'package:mynotes/views/notes_view/favorite_notes_view.dart';
 
-import '../custom_widgets/button.dart';
-import '../custom_widgets/icon.dart';
 import '../services/auth/auth_service.dart';
 import '../util/constants/routes.dart';
+import 'custom_widgets/button.dart';
+import 'custom_widgets/icon.dart';
+import 'custom_widgets/reused_widgets.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});

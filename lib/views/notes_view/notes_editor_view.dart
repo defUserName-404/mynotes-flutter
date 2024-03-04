@@ -1,18 +1,18 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:mynotes/custom_widgets/textfield.dart';
 import 'package:mynotes/services/cloud/cloud_storage_service.dart';
-import 'package:mynotes/services/crud/note.dart';
+import 'package:mynotes/services/crud/notes/note.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/util/constants/colors.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../services/cloud/cloud_note.dart';
+import '../../services/crud/notes/note_editing_mode.dart';
 import '../custom_widgets/button.dart';
 import '../custom_widgets/icon.dart';
 import '../custom_widgets/reused_widgets.dart';
-import '../services/cloud/cloud_note.dart';
-import '../services/cloud/note_editing_mode.dart';
+import '../custom_widgets/textfield.dart';
 
 class NoteEditorView extends StatefulWidget {
   final NoteEditingMode noteEditingMode;
