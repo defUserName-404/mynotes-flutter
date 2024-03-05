@@ -9,9 +9,8 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../services/cloud/cloud_note.dart';
 import '../../services/crud/notes/note_editing_mode.dart';
-import '../custom_widgets/button.dart';
+import '../custom_widgets/dialogs.dart';
 import '../custom_widgets/icon.dart';
-import '../custom_widgets/reused_widgets.dart';
 import '../custom_widgets/textfield.dart';
 
 class NoteEditorView extends StatefulWidget {
@@ -86,8 +85,13 @@ class _NoteEditorViewState extends State<NoteEditorView> {
           IconButton(
               icon: const AppIcon(icon: Icons.delete),
               onPressed: () async {
-                final delete = await _showDeleteConfirmationDialog(context);
-                if (delete) {
+                final shouldDeleteNote = await AppDialog.showConfirmationDialog(
+                    buildContext: context,
+                    title: 'Delete Note',
+                    content: 'Do you really want to delete this note?',
+                    confirmIcon: Icons.delete_rounded,
+                    cancelIcon: Icons.cancel);
+                if (shouldDeleteNote) {
                   _deleteNote(noteId: _passedNote!.documentId);
                   if (mounted) Navigator.maybePop(context);
                 }
@@ -196,36 +200,5 @@ class _NoteEditorViewState extends State<NoteEditorView> {
 
   Future<void> _deleteNote({required String noteId}) async {
     _notesService.deleteNote(documentId: noteId);
-  }
-
-  Future<bool> _showDeleteConfirmationDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Delete Note'),
-            content: const Text('Do you really want to delete this note?'),
-            actions: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  AppButton(
-                      text: 'Yes, delete this note',
-                      icon: const Icon(Icons.outbond),
-                      onPressed: () {
-                        Navigator.of(context).pop(true);
-                      }),
-                  AppButton(
-                      text: 'Cancel',
-                      icon: const Icon(Icons.cancel),
-                      onPressed: () {
-                        Navigator.of(context).pop(false);
-                        showToast('Delete cancelled');
-                      }),
-                ],
-              )
-            ],
-          );
-        }).then((value) => value ?? false);
   }
 }

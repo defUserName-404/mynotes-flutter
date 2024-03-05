@@ -5,11 +5,11 @@ import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
 import 'package:mynotes/util/constants/routes.dart';
+import 'package:mynotes/views/custom_widgets/dialogs.dart';
 
 import '../services/auth/bloc/auth_state.dart';
 import 'custom_widgets/button.dart';
 import 'custom_widgets/icon.dart';
-import 'custom_widgets/reused_widgets.dart';
 import 'custom_widgets/textfield.dart';
 
 class LoginView extends StatefulWidget {
@@ -91,11 +91,23 @@ class _LoginViewState extends State<LoginView> {
               listener: (context, state) async {
                 if (state is AppAuthStateLoggedOut) {
                   if (state.exception is UserNotFoundAuthException) {
-                    showToast('User not found');
+                    AppDialog.showErrorDialog(
+                        context: context,
+                        title: 'User Not Found',
+                        content:
+                            'Email you entered does not belong any existing user. Please try registering instead.');
                   } else if (state.exception is WrongPasswordAuthException) {
-                    showToast('Wrong password entered.');
+                    AppDialog.showErrorDialog(
+                        context: context,
+                        title: 'Wrong Password Entered',
+                        content:
+                            'Password you entered is incorrect. Please try again.');
                   } else if (state.exception is GenericAuthException) {
-                    showToast('Authentication error.');
+                    AppDialog.showErrorDialog(
+                        context: context,
+                        title: 'Authentication Error',
+                        content:
+                            'An error occurred while trying to login. Please try again.');
                   }
                 }
               },

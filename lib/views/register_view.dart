@@ -1,5 +1,3 @@
-import 'dart:developer' as devtools show log;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
@@ -7,8 +5,8 @@ import 'package:mynotes/services/auth/auth_service.dart';
 
 import '../util/constants/routes.dart';
 import 'custom_widgets/button.dart';
+import 'custom_widgets/dialogs.dart';
 import 'custom_widgets/icon.dart';
-import 'custom_widgets/reused_widgets.dart';
 import 'custom_widgets/textfield.dart';
 
 class RegisterView extends StatefulWidget {
@@ -29,21 +27,34 @@ class _RegisterViewState extends State<RegisterView> {
     try {
       final userCredentials = await AppAuthService.firebase()
           .register(email: email, password: password);
-      devtools.log(userCredentials.toString());
-      showToast('Successfully registered');
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         Navigator.of(context)
             .pushNamedAndRemoveUntil(homeRoute, (route) => false);
       });
     } on EmailAlreadyExistsException {
-      showToast(
-          'Already registered with the provided email. Try logging in instead.');
+      AppDialog.showErrorDialog(
+          context: context,
+          title: 'User Not Found',
+          content:
+              'Email you entered does not belong any existing user. Try Registering.');
     } on WeakPasswordAuthException {
-      showToast('Weak password provided. Try a stronger one.');
+      AppDialog.showErrorDialog(
+          context: context,
+          title: 'User Not Found',
+          content:
+              'Email you entered does not belong any existing user. Try Registering.');
     } on InvalidEmailAuthException {
-      showToast('Invalid email!');
+      AppDialog.showErrorDialog(
+          context: context,
+          title: 'User Not Found',
+          content:
+              'Email you entered does not belong any existing user. Try Registering.');
     } on GenericAuthException {
-      showToast('Authentication error.');
+      AppDialog.showErrorDialog(
+          context: context,
+          title: 'User Not Found',
+          content:
+              'Email you entered does not belong any existing user. Try Registering.');
     }
   }
 

@@ -1,18 +1,15 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
 import 'package:mynotes/util/constants/colors.dart';
+import 'package:mynotes/views/custom_widgets/dialogs.dart';
 import 'package:mynotes/views/notes_view/all_notes_view.dart';
 import 'package:mynotes/views/notes_view/favorite_notes_view.dart';
 
 import '../util/constants/routes.dart';
-import 'custom_widgets/button.dart';
 import 'custom_widgets/icon.dart';
-import 'custom_widgets/reused_widgets.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -96,7 +93,12 @@ class _HomeViewState extends State<HomeView>
           child: IconButton(
               icon: const AppIcon(icon: Icons.account_circle),
               onPressed: () async {
-                final shouldLogout = await _showLogOutDialog(context);
+                final shouldLogout = await AppDialog.showConfirmationDialog(
+                    buildContext: context,
+                    title: 'Log Out',
+                    content: 'Are you sure you want to log out?',
+                    confirmIcon: Icons.outbond_rounded,
+                    cancelIcon: Icons.cancel);
                 if (shouldLogout && mounted) {
                   context.read<AppAuthBloc>().add(const AppAuthEventLogout());
                 }
@@ -111,37 +113,6 @@ class _HomeViewState extends State<HomeView>
       controller: _tabController,
       children: [AllNotesView(), const FavoriteNotesView()],
     );
-  }
-
-  Future<bool> _showLogOutDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Sign out'),
-            content: const Text('Are you sure you want to sign out?'),
-            actions: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  AppButton(
-                      text: 'Yes, sign out',
-                      icon: const Icon(Icons.outbond),
-                      onPressed: () {
-                        Navigator.of(context).pop(true);
-                      }),
-                  AppButton(
-                      text: 'Cancel',
-                      icon: const Icon(Icons.cancel),
-                      onPressed: () {
-                        Navigator.of(context).pop(false);
-                        showToast('Sign out cancelled');
-                      }),
-                ],
-              )
-            ],
-          );
-        }).then((value) => value ?? false);
   }
 
   PreferredSizeWidget _tabBar() {
