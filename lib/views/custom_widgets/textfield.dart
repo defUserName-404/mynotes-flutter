@@ -6,6 +6,7 @@ class AppTextField extends StatelessWidget {
   final TextInputType keyboardType;
   final String hintText;
   final String labelText;
+  final String? errorText;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final Color borderColor;
@@ -16,6 +17,7 @@ class AppTextField extends StatelessWidget {
   final int? maxLines;
   final bool expands;
   final Function? onTap;
+  final String? Function(String?)? validator;
 
   const AppTextField(
       {super.key,
@@ -23,6 +25,7 @@ class AppTextField extends StatelessWidget {
       this.keyboardType = TextInputType.text,
       required this.hintText,
       required this.labelText,
+      this.errorText,
       this.prefixIcon,
       this.suffixIcon,
       this.obscureText = false,
@@ -32,11 +35,12 @@ class AppTextField extends StatelessWidget {
       this.autoCorrect = true,
       this.borderColor = CustomColors.primary,
       this.focusNode,
+      this.validator,
       this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
         controller: controller,
         keyboardType: keyboardType,
         textAlignVertical: TextAlignVertical.top,
@@ -44,6 +48,14 @@ class AppTextField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hintText,
           labelText: labelText,
+          errorText: errorText,
+          errorMaxLines: 5,
+          errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4.0),
+              borderSide: const BorderSide(color: Colors.red, width: 1)),
+          focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4.0),
+              borderSide: const BorderSide(color: Colors.red, width: 3)),
           labelStyle: const TextStyle(
               fontWeight: FontWeight.bold, color: CustomColors.primary),
           floatingLabelAlignment: FloatingLabelAlignment.center,
@@ -56,6 +68,7 @@ class AppTextField extends StatelessWidget {
           prefixIcon: _getColoredIcon(prefixIcon),
           suffixIcon: _getColoredIcon(suffixIcon),
         ),
+        validator: validator,
         obscureText: obscureText,
         enableSuggestions: enableSuggestions,
         autocorrect: autoCorrect,

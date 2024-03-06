@@ -37,12 +37,12 @@ class AppDialog {
   static Future<void> showErrorDialog(
       {required BuildContext context,
       required String title,
-      required String content}) async {
+      String? content}) async {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(title),
-        content: Text(content),
+        content: content == null ? null : Text(content),
         actions: [
           AppButton(
               text: 'Ok',
