@@ -20,9 +20,17 @@ class AppAuthEventLogout extends AppAuthEvent {
   const AppAuthEventLogout();
 }
 
+class AppAuthEventShouldRegister extends AppAuthEvent {
+  const AppAuthEventShouldRegister();
+}
+
 class AppAuthEventRegister extends AppAuthEvent {
   final String email;
   final String password;
 
   const AppAuthEventRegister({required this.email, required this.password});
+}
+
+class AppAuthEventSendEmailVerification extends AppAuthEvent {
+  const AppAuthEventSendEmailVerification();
 }

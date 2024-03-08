@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 
+import '../services/auth/bloc/auth_bloc.dart';
+import '../services/auth/bloc/auth_event.dart';
 import '../util/constants/routes.dart';
 import 'custom_widgets/button.dart';
 
@@ -44,13 +47,8 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
           AppButton(
               text: 'Restart',
               icon: const Icon(Icons.restart_alt),
-              onPressed: () async {
-                await AppAuthService.firebase().logout();
-                SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(loginRoute, (route) => false);
-                });
-              }),
+              onPressed: () =>
+                  context.read<AppAuthBloc>().add(const AppAuthEventLogout())),
         ],
       ),
     );

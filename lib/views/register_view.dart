@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
-import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/auth/auth_validation.dart';
+import 'package:mynotes/services/auth/bloc/auth_event.dart';
 
-import '../util/constants/routes.dart';
+import '../services/auth/bloc/auth_bloc.dart';
+import '../services/auth/bloc/auth_state.dart';
 import 'custom_widgets/button.dart';
+import 'custom_widgets/dialogs.dart';
 import 'custom_widgets/icon.dart';
 import 'custom_widgets/textfield.dart';
 
@@ -22,22 +24,6 @@ class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _passwordController;
   late final TextEditingController _confirmPasswordController;
   late bool _isPasswordVisible;
-
-  Future<void> _handleRegistration() async {
-    final email = _emailController.text;
-    final password = _passwordController.text;
-    try {
-      await AppAuthService.firebase()
-          .register(email: email, password: password);
-      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil(homeRoute, (route) => false);
-      });
-    } on EmailAlreadyExistsException {
-    } on WeakPasswordAuthException {
-    } on InvalidEmailAuthException {
-    } on GenericAuthException {}
-  }
 
   @override
   void initState() {
@@ -58,7 +44,38 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: _appBar(), body: _body());
+    return BlocListener<AppAuthBloc, AppAuthState>(
+      listener: (context, state) async {
+        if (state is AppAuthStateRegistering) {
+          if (state.exception is WeakPasswordAuthException) {
+            AppDialog.showErrorDialog(
+                context: context,
+                title: 'Weak Password',
+                content:
+                    'The password entered is weak. Stronger password recommended.');
+          } else if (state.exception is EmailAlreadyExistsException) {
+            AppDialog.showErrorDialog(
+                context: context,
+                title: 'Email Already Exists',
+                content:
+                    'The email you entered already has an account associated with it. Please try logging in instead.');
+          } else if (state.exception is InvalidEmailAuthException) {
+            AppDialog.showErrorDialog(
+                context: context,
+                title: 'Invalid Email',
+                content:
+                    'Email is invalid. Please try again with a valid one.');
+          } else if (state.exception is GenericAuthException) {
+            AppDialog.showErrorDialog(
+                context: context,
+                title: 'Authentication Error',
+                content:
+                    'An error occurred while trying to register. Please try again.');
+          }
+        }
+      },
+      child: Scaffold(appBar: _appBar(), body: _body()),
+    );
   }
 
   PreferredSizeWidget _appBar() {
@@ -129,18 +146,22 @@ class _RegisterViewState extends State<RegisterView> {
                 icon: const Icon(Icons.directions),
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    await _handleRegistration();
+                    final email = _emailController.text;
+                    final password = _passwordController.text;
+                    context.read<AppAuthBloc>().add(
+                          AppAuthEventRegister(
+                            email: email,
+                            password: password,
+                          ),
+                        );
                   }
                 }),
             AppButton(
                 text: 'Already registered? Login here!',
                 icon: const Icon(Icons.account_circle),
-                onPressed: () {
-                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil(loginRoute, (route) => false);
-                  });
-                }),
+                onPressed: () => context
+                    .read<AppAuthBloc>()
+                    .add(const AppAuthEventLogout())),
           ],
         ),
       ),

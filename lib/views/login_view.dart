@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
-import 'package:mynotes/util/constants/routes.dart';
 import 'package:mynotes/views/custom_widgets/dialogs.dart';
 
 import '../services/auth/bloc/auth_state.dart';
@@ -41,7 +39,32 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: _appBar(), body: _body());
+    return BlocListener<AppAuthBloc, AppAuthState>(
+      listener: (context, state) async {
+        if (state is AppAuthStateLoggedOut) {
+          if (state.exception is UserNotFoundAuthException) {
+            AppDialog.showErrorDialog(
+                context: context,
+                title: 'User Not Found',
+                content:
+                    'Email you entered does not belong any existing user. Please try registering instead.');
+          } else if (state.exception is WrongPasswordAuthException) {
+            AppDialog.showErrorDialog(
+                context: context,
+                title: 'Wrong Password Entered',
+                content:
+                    'Password you entered is incorrect. Please try again.');
+          } else if (state.exception is GenericAuthException) {
+            AppDialog.showErrorDialog(
+                context: context,
+                title: 'Authentication Error',
+                content:
+                    'An error occurred while trying to login. Please try again.');
+          }
+        }
+      },
+      child: Scaffold(appBar: _appBar(), body: _body()),
+    );
   }
 
   PreferredSizeWidget _appBar() {
@@ -87,49 +110,23 @@ class _LoginViewState extends State<LoginView> {
               autoCorrect: false,
             ),
             const SizedBox(height: 16.0),
-            BlocListener<AppAuthBloc, AppAuthState>(
-              listener: (context, state) async {
-                if (state is AppAuthStateLoggedOut) {
-                  if (state.exception is UserNotFoundAuthException) {
-                    AppDialog.showErrorDialog(
-                        context: context,
-                        title: 'User Not Found',
-                        content:
-                            'Email you entered does not belong any existing user. Please try registering instead.');
-                  } else if (state.exception is WrongPasswordAuthException) {
-                    AppDialog.showErrorDialog(
-                        context: context,
-                        title: 'Wrong Password Entered',
-                        content:
-                            'Password you entered is incorrect. Please try again.');
-                  } else if (state.exception is GenericAuthException) {
-                    AppDialog.showErrorDialog(
-                        context: context,
-                        title: 'Authentication Error',
-                        content:
-                            'An error occurred while trying to login. Please try again.');
-                  }
-                }
-              },
-              child: AppButton(
-                  text: 'Login',
-                  icon: const Icon(Icons.directions),
-                  onPressed: () async {
-                    final email = _emailController.text;
-                    final password = _passwordController.text;
-                    context.read<AppAuthBloc>().add(
-                        AppAuthEventLogin(email: email, password: password));
-                  }),
-            ),
+            AppButton(
+                text: 'Login',
+                icon: const Icon(Icons.directions),
+                onPressed: () async {
+                  final email = _emailController.text;
+                  final password = _passwordController.text;
+                  context
+                      .read<AppAuthBloc>()
+                      .add(AppAuthEventLogin(email: email, password: password));
+                }),
             AppButton(
                 text: 'Don\'t have an account? Register here!',
                 icon: const Icon(Icons.account_circle),
-                onPressed: () {
-                  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        registerRoute, (route) => false);
-                  });
-                }),
+                onPressed: () => context
+                    .read<AppAuthBloc>()
+                    .add(const AppAuthEventShouldRegister())
+            ),
           ],
         ));
   }
