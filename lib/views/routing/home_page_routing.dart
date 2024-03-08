@@ -5,9 +5,9 @@ import 'package:getwidget/types/gf_loader_type.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_state.dart';
 import 'package:mynotes/views/home_view.dart';
-import 'package:mynotes/views/login_view.dart';
-import 'package:mynotes/views/register_view.dart';
-import 'package:mynotes/views/verify_email_view.dart';
+import 'package:mynotes/views/auth_view/login_view.dart';
+import 'package:mynotes/views/auth_view/register_view.dart';
+import 'package:mynotes/views/auth_view/verify_email_view.dart';
 
 import '../../services/auth/bloc/auth_event.dart';
 

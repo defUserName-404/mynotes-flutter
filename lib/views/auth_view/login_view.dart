@@ -5,10 +5,10 @@ import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
 import 'package:mynotes/views/custom_widgets/dialogs.dart';
 
-import '../services/auth/bloc/auth_state.dart';
-import 'custom_widgets/button.dart';
-import 'custom_widgets/icon.dart';
-import 'custom_widgets/textfield.dart';
+import '../../services/auth/bloc/auth_state.dart';
+import '../custom_widgets/button.dart';
+import '../custom_widgets/icon.dart';
+import '../custom_widgets/textfield.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});

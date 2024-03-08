@@ -4,12 +4,12 @@ import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/auth_validation.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
 
-import '../services/auth/bloc/auth_bloc.dart';
-import '../services/auth/bloc/auth_state.dart';
-import 'custom_widgets/button.dart';
-import 'custom_widgets/dialogs.dart';
-import 'custom_widgets/icon.dart';
-import 'custom_widgets/textfield.dart';
+import '../../services/auth/bloc/auth_bloc.dart';
+import '../../services/auth/bloc/auth_state.dart';
+import '../custom_widgets/button.dart';
+import '../custom_widgets/dialogs.dart';
+import '../custom_widgets/icon.dart';
+import '../custom_widgets/textfield.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
