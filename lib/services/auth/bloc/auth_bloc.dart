@@ -61,7 +61,26 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
     // ? send email verification
     on<AppAuthEventSendEmailVerification>((event, emit) async {
       await appAuthProvider.sendEmailVerification();
-      emit(state);
+      emit(const AppAuthStateNeedsEmailVerification());
+    });
+    // ? forget password
+    on<AppAuthEventForgetPassword>((event, emit) async {
+      final email = event.email;
+      if (email == null) {
+        emit(const AppAuthStateForgettingPassword(hasSentEmail: false));
+      }
+      bool didSentEmail;
+      Exception? exception;
+      try {
+        await appAuthProvider.sendPasswordReset(toEmail: email!);
+        didSentEmail = true;
+        exception = null;
+      } on Exception catch (e) {
+        didSentEmail = false;
+        exception = e;
+      }
+      emit(AppAuthStateForgettingPassword(
+          hasSentEmail: didSentEmail, exception: exception));
     });
     // ? register
     on<AppAuthEventRegister>((event, emit) async {

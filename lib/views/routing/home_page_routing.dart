@@ -4,12 +4,13 @@ import 'package:getwidget/components/loader/gf_loader.dart';
 import 'package:getwidget/types/gf_loader_type.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_state.dart';
-import 'package:mynotes/views/home_view.dart';
-import 'package:mynotes/views/auth_view/login_view.dart';
+import 'package:mynotes/views/auth_view/forget_password_view.dart';
 import 'package:mynotes/views/auth_view/register_view.dart';
 import 'package:mynotes/views/auth_view/verify_email_view.dart';
+import 'package:mynotes/views/home_view.dart';
 
 import '../../services/auth/bloc/auth_event.dart';
+import '../auth_view/login_view.dart';
 
 class HomePageRouting extends StatelessWidget {
   const HomePageRouting({super.key});
@@ -26,6 +27,8 @@ class HomePageRouting extends StatelessWidget {
         return const LoginView();
       } else if (state is AppAuthStateRegistering) {
         return const RegisterView();
+      } else if (state is AppAuthStateForgettingPassword) {
+        return const ForgetPasswordView();
       } else {
         return const Scaffold(
           body: GFLoader(

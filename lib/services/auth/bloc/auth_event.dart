@@ -34,3 +34,9 @@ class AppAuthEventRegister extends AppAuthEvent {
 class AppAuthEventSendEmailVerification extends AppAuthEvent {
   const AppAuthEventSendEmailVerification();
 }
+
+class AppAuthEventForgetPassword extends AppAuthEvent {
+  final String? email;
+
+  const AppAuthEventForgetPassword({this.email});
+}

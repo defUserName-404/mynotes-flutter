@@ -36,3 +36,11 @@ class AppAuthStateRegistering extends AppAuthState {
 
   const AppAuthStateRegistering({this.exception});
 }
+
+class AppAuthStateForgettingPassword extends AppAuthState {
+  final Exception? exception;
+  final bool hasSentEmail;
+
+  const AppAuthStateForgettingPassword(
+      {this.exception, required this.hasSentEmail});
+}

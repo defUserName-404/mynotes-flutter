@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
@@ -21,12 +23,14 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
   late bool _isPasswordVisible;
+  late int _loginTryCount;
 
   @override
   void initState() {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _isPasswordVisible = false;
+    _loginTryCount = 0;
     super.initState();
   }
 
@@ -40,7 +44,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AppAuthBloc, AppAuthState>(
-      listener: (context, state) async {
+      listener: (context, state) {
         if (state is AppAuthStateLoggedOut) {
           if (state.exception is UserNotFoundAuthException) {
             AppDialog.showErrorDialog(
@@ -54,12 +58,18 @@ class _LoginViewState extends State<LoginView> {
                 title: 'Wrong Password Entered',
                 content:
                     'Password you entered is incorrect. Please try again.');
+            setState(() {
+              _loginTryCount++;
+            });
           } else if (state.exception is GenericAuthException) {
             AppDialog.showErrorDialog(
                 context: context,
                 title: 'Authentication Error',
                 content:
                     'An error occurred while trying to login. Please try again.');
+            setState(() {
+              _loginTryCount++;
+            });
           }
         }
       },
@@ -110,6 +120,15 @@ class _LoginViewState extends State<LoginView> {
               autoCorrect: false,
             ),
             const SizedBox(height: 16.0),
+            Visibility(
+              visible: _loginTryCount > 1,
+              child: AppButton(
+                  text: 'Forget password',
+                  icon: const Icon(Icons.password),
+                  onPressed: () => context
+                      .read<AppAuthBloc>()
+                      .add(const AppAuthEventForgetPassword())),
+            ),
             AppButton(
                 text: 'Login',
                 icon: const Icon(Icons.directions),
@@ -125,8 +144,7 @@ class _LoginViewState extends State<LoginView> {
                 icon: const Icon(Icons.account_circle),
                 onPressed: () => context
                     .read<AppAuthBloc>()
-                    .add(const AppAuthEventShouldRegister())
-            ),
+                    .add(const AppAuthEventShouldRegister())),
           ],
         ));
   }

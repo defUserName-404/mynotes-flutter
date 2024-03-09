@@ -32,4 +32,8 @@ class AppAuthService implements AppAuthProvider {
 
   @override
   Future<void> initialize() => appAuthProvider.initialize();
+
+  @override
+  Future<void> sendPasswordReset({required String toEmail}) =>
+      appAuthProvider.sendEmailVerification();
 }
