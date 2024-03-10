@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
 import 'package:mynotes/util/constants/colors.dart';
-import 'package:mynotes/views/custom_widgets/dialogs.dart';
 import 'package:mynotes/views/notes_view/all_notes_view.dart';
 import 'package:mynotes/views/notes_view/favorite_notes_view.dart';
 
@@ -92,17 +91,9 @@ class _HomeViewState extends State<HomeView>
           maintainAnimation: true,
           child: IconButton(
               icon: const AppIcon(icon: Icons.account_circle),
-              onPressed: () async {
-                final shouldLogout = await AppDialog.showConfirmationDialog(
-                    buildContext: context,
-                    title: 'Log Out',
-                    content: 'Are you sure you want to log out?',
-                    confirmIcon: Icons.outbond_rounded,
-                    cancelIcon: Icons.cancel);
-                if (shouldLogout && mounted) {
-                  context.read<AppAuthBloc>().add(const AppAuthEventLogout());
-                }
-              }),
+              onPressed: () => context
+                  .read<AppAuthBloc>()
+                  .add(const AppAuthEventAccountSettings())),
         ),
       ],
     );

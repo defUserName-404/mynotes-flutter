@@ -47,6 +47,10 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
         emit(AppAuthStateLoggedOut(exception: e, isLoading: false));
       }
     });
+    // ? account settings
+    on<AppAuthEventAccountSettings>((event, emit) {
+      emit(const AppAuthStateAccountSettings());
+    });
     // ? logout
     on<AppAuthEventLogout>((event, emit) async {
       try {

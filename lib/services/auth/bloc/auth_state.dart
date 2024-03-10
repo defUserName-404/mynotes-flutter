@@ -44,3 +44,7 @@ final class AppAuthStateForgettingPassword extends AppAuthState {
   const AppAuthStateForgettingPassword(
       {this.exception, required this.hasSentEmail});
 }
+
+final class AppAuthStateAccountSettings extends AppAuthState {
+  const AppAuthStateAccountSettings();
+}

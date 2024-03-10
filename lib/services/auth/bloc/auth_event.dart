@@ -40,3 +40,18 @@ final class AppAuthEventForgetPassword extends AppAuthEvent {
 
   const AppAuthEventForgetPassword({this.email});
 }
+
+final class AppAuthEventAccountSettings extends AppAuthEvent {
+  const AppAuthEventAccountSettings();
+}
+
+final class AppAuthEventChangePassword extends AppAuthEvent {
+  final String email;
+  final String oldPassword;
+  final String newPassword;
+
+  const AppAuthEventChangePassword(
+      {required this.email,
+      required this.oldPassword,
+      required this.newPassword});
+}
