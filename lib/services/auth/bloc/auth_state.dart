@@ -7,21 +7,21 @@ abstract class AppAuthState {
   const AppAuthState();
 }
 
-class AppAuthStateUninitialized extends AppAuthState {
+final class AppAuthStateUninitialized extends AppAuthState {
   const AppAuthStateUninitialized();
 }
 
-class AppAuthStateLoggedIn extends AppAuthState {
+final class AppAuthStateLoggedIn extends AppAuthState {
   final AppAuthUser user;
 
   const AppAuthStateLoggedIn({required this.user});
 }
 
-class AppAuthStateNeedsEmailVerification extends AppAuthState {
+final class AppAuthStateNeedsEmailVerification extends AppAuthState {
   const AppAuthStateNeedsEmailVerification();
 }
 
-class AppAuthStateLoggedOut extends AppAuthState with EquatableMixin {
+final class AppAuthStateLoggedOut extends AppAuthState with EquatableMixin {
   final Exception? exception;
   final bool isLoading;
 
@@ -31,13 +31,13 @@ class AppAuthStateLoggedOut extends AppAuthState with EquatableMixin {
   List<Object?> get props => [exception, isLoading];
 }
 
-class AppAuthStateRegistering extends AppAuthState {
+final class AppAuthStateRegistering extends AppAuthState {
   final Exception? exception;
 
   const AppAuthStateRegistering({this.exception});
 }
 
-class AppAuthStateForgettingPassword extends AppAuthState {
+final class AppAuthStateForgettingPassword extends AppAuthState {
   final Exception? exception;
   final bool hasSentEmail;
 
