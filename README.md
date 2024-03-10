@@ -1,2 +1,3 @@
 # mynotes-flutter
-Test Flutter App with Firebase
+
+Flutter Note Taking App with Firebase
