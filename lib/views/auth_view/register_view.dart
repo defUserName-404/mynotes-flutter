@@ -89,80 +89,82 @@ class _RegisterViewState extends State<RegisterView> {
   }
 
   Widget _body() {
-    return Container(
-      margin: const EdgeInsets.all(4.0),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            const SizedBox(height: 4.0),
-            AppTextField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              hintText: 'Enter your email here',
-              labelText: 'Email',
-              validator: (email) =>
-                  AppAuthenticationValidator.validateEmail(email!),
-              prefixIcon: const Icon(Icons.email_rounded),
-            ),
-            const SizedBox(height: 4.0),
-            AppTextField(
-              controller: _passwordController,
-              hintText: 'Enter your password here',
-              labelText: 'Password',
-              prefixIcon: const Icon(Icons.lock),
-              validator: (password) =>
-                  AppAuthenticationValidator.validatePassword(password!),
-              suffixIcon: IconButton(
-                  icon: AppIcon(
-                      icon: _isPasswordVisible
-                          ? Icons.visibility_off
-                          : Icons.visibility),
-                  onPressed: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
+    return SingleChildScrollView(
+      child: Container(
+        margin: const EdgeInsets.all(4.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              const SizedBox(height: 4.0),
+              AppTextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                hintText: 'Enter your email here',
+                labelText: 'Email',
+                validator: (email) =>
+                    AppAuthenticationValidator.validateEmail(email!),
+                prefixIcon: const Icon(Icons.email_rounded),
+              ),
+              const SizedBox(height: 4.0),
+              AppTextField(
+                controller: _passwordController,
+                hintText: 'Enter your password here',
+                labelText: 'Password',
+                prefixIcon: const Icon(Icons.lock),
+                validator: (password) =>
+                    AppAuthenticationValidator.validatePassword(password!),
+                suffixIcon: IconButton(
+                    icon: AppIcon(
+                        icon: _isPasswordVisible
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    }),
+                obscureText: !_isPasswordVisible,
+                enableSuggestions: false,
+                autoCorrect: false,
+              ),
+              const SizedBox(height: 4.0),
+              AppTextField(
+                controller: _confirmPasswordController,
+                hintText: 'Enter your password again',
+                labelText: 'Confirm Password',
+                validator: (retypedPassword) =>
+                    AppAuthenticationValidator.validateConfirmPassword(
+                        _passwordController.text, retypedPassword!),
+                prefixIcon: const Icon(Icons.lock),
+                obscureText: true,
+                enableSuggestions: false,
+                autoCorrect: false,
+              ),
+              const SizedBox(height: 16.0),
+              AppButton(
+                  text: 'Register',
+                  icon: const Icon(Icons.directions),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      final email = _emailController.text;
+                      final password = _passwordController.text;
+                      context.read<AppAuthBloc>().add(
+                            AppAuthEventRegister(
+                              email: email,
+                              password: password,
+                            ),
+                          );
+                    }
                   }),
-              obscureText: !_isPasswordVisible,
-              enableSuggestions: false,
-              autoCorrect: false,
-            ),
-            const SizedBox(height: 4.0),
-            AppTextField(
-              controller: _confirmPasswordController,
-              hintText: 'Enter your password again',
-              labelText: 'Confirm Password',
-              validator: (retypedPassword) =>
-                  AppAuthenticationValidator.validateConfirmPassword(
-                      _passwordController.text, retypedPassword!),
-              prefixIcon: const Icon(Icons.lock),
-              obscureText: true,
-              enableSuggestions: false,
-              autoCorrect: false,
-            ),
-            const SizedBox(height: 16.0),
-            AppButton(
-                text: 'Register',
-                icon: const Icon(Icons.directions),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    final email = _emailController.text;
-                    final password = _passwordController.text;
-                    context.read<AppAuthBloc>().add(
-                          AppAuthEventRegister(
-                            email: email,
-                            password: password,
-                          ),
-                        );
-                  }
-                }),
-            AppButton(
-                text: 'Already registered? Login here!',
-                icon: const Icon(Icons.account_circle),
-                onPressed: () => context
-                    .read<AppAuthBloc>()
-                    .add(const AppAuthEventLogout())),
-          ],
+              AppButton(
+                  text: 'Already registered? Login here!',
+                  icon: const Icon(Icons.account_circle),
+                  onPressed: () => context
+                      .read<AppAuthBloc>()
+                      .add(const AppAuthEventLogout())),
+            ],
+          ),
         ),
       ),
     );
