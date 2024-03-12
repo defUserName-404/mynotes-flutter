@@ -102,7 +102,7 @@ class _HomeViewState extends State<HomeView>
   Widget _body() {
     return TabBarView(
       controller: _tabController,
-      children: [AllNotesView(), const FavoriteNotesView()],
+      children: const [AllNotesView(), FavoriteNotesView()],
     );
   }
 
