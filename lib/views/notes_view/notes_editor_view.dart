@@ -1,9 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/cloud/cloud_storage_service.dart';
 import 'package:mynotes/services/crud/notes/note.dart';
-import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/util/constants/colors.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -91,9 +89,9 @@ class _NoteEditorViewState extends State<NoteEditorView> {
                     content: 'Do you really want to delete this note?',
                     confirmIcon: Icons.delete_rounded,
                     cancelIcon: Icons.cancel);
-                if (shouldDeleteNote) {
+                if (shouldDeleteNote && mounted) {
                   _deleteNote(noteId: _passedNote!.documentId);
-                  if (mounted) Navigator.maybePop(context);
+                  Navigator.pop(context);
                 }
               }),
         ],
@@ -115,19 +113,17 @@ class _NoteEditorViewState extends State<NoteEditorView> {
             },
             icon: const AppIcon(icon: Icons.share)),
         IconButton(
-            onPressed: () async {
+            onPressed: () {
               final note = NoteDto(
                   title: _titleController.text,
                   content: _contentController.text,
                   color: _backgroundColor,
                   isFavorite: _isFavorite);
-              final pushedNoteInDatabase =
-                  _noteEditingMode == NoteEditingMode.newNote
-                      ? await _createNewNote(newNote: note)
-                      : await _updateExistingNote(
-                          updatedNote: note, noteId: _passedNote!.documentId);
-              log(pushedNoteInDatabase.toString());
-              if (mounted) Navigator.maybePop(context);
+              _noteEditingMode == NoteEditingMode.newNote
+                  ? _createNewNote(newNote: note)
+                  : _updateExistingNote(
+                      updatedNote: note, noteId: _passedNote!.documentId);
+              Navigator.pop(context);
             },
             icon: const AppIcon(icon: Icons.check))
       ],
@@ -186,19 +182,17 @@ class _NoteEditorViewState extends State<NoteEditorView> {
     );
   }
 
-  Future<CloudNote> _createNewNote({required NoteDto newNote}) async {
+  void _createNewNote({required NoteDto newNote}) {
     final currentUser = AppAuthService.firebase().currentUser!;
-    return await _notesService.createNewNote(
-        ownerUserId: currentUser.id, note: newNote);
+    _notesService.createNewNote(ownerUserId: currentUser.id, note: newNote);
   }
 
-  Future<CloudNote> _updateExistingNote(
-      {required NoteDto updatedNote, required String noteId}) async {
-    return await _notesService.updateNote(
-        note: updatedNote, documentId: noteId);
+  void _updateExistingNote(
+      {required NoteDto updatedNote, required String noteId}) {
+    _notesService.updateNote(note: updatedNote, documentId: noteId);
   }
 
-  Future<void> _deleteNote({required String noteId}) async {
+  void _deleteNote({required String noteId}) {
     _notesService.deleteNote(documentId: noteId);
   }
 }
