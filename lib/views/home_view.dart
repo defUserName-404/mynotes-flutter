@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:getwidget/components/loader/gf_loader.dart';
+import 'package:getwidget/types/gf_loader_type.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
 import 'package:mynotes/util/constants/colors.dart';
-import 'package:mynotes/views/notes_view/all_notes_view.dart';
-import 'package:mynotes/views/notes_view/favorite_notes_view.dart';
+import 'package:mynotes/views/notes_view/multi_notes_view.dart';
 
+import '../services/auth/auth_service.dart';
+import '../services/cloud/cloud_note.dart';
+import '../services/cloud/cloud_storage_service.dart';
 import '../util/constants/routes.dart';
 import 'custom_widgets/icon.dart';
 
@@ -23,6 +27,11 @@ class _HomeViewState extends State<HomeView>
   late final TabController _tabController;
   late final FocusNode _searchFocusNode;
   late final TextEditingController _searchController;
+  final CloudStorageService _notesService = CloudStorageService();
+  late Iterable<CloudNote> _allNotes;
+  late Iterable<CloudNote> _favoriteNotes;
+
+  String get userId => AppAuthService.firebase().currentUser!.id;
 
   @override
   void initState() {
@@ -100,9 +109,35 @@ class _HomeViewState extends State<HomeView>
   }
 
   Widget _body() {
-    return TabBarView(
-      controller: _tabController,
-      children: const [AllNotesView(), FavoriteNotesView()],
+    return StreamBuilder(
+      stream: _notesService.allNotes(ownerUserId: userId),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+          case ConnectionState.active:
+            if (snapshot.hasData) {
+              _allNotes = snapshot.data as Iterable<CloudNote>;
+              _favoriteNotes = _allNotes.where((note) => note.isFavorite);
+              return TabBarView(
+                controller: _tabController,
+                children: [
+                  MultiNotesView(
+                    allNotes: _allNotes,
+                  ),
+                  MultiNotesView(allNotes: _favoriteNotes)
+                ],
+              );
+            } else {
+              return const GFLoader(
+                type: GFLoaderType.square,
+              );
+            }
+          default:
+            return const GFLoader(
+              type: GFLoaderType.square,
+            );
+        }
+      },
     );
   }
 
