@@ -4,7 +4,7 @@ import 'package:getwidget/components/loader/gf_loader.dart';
 import 'package:getwidget/types/gf_loader_type.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_state.dart';
-import 'package:mynotes/views/auth_view/account_settings__view.dart';
+import 'package:mynotes/views/auth_view/account_settings_view.dart';
 import 'package:mynotes/views/auth_view/forget_password_view.dart';
 import 'package:mynotes/views/auth_view/register_view.dart';
 import 'package:mynotes/views/auth_view/verify_email_view.dart';
