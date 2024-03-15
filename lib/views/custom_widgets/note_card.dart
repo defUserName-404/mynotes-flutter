@@ -33,7 +33,7 @@ class _NoteCardState extends State<NoteCard>
       duration: kThemeChangeDuration,
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1, end: 0.8).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: Curves.ease,

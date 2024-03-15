@@ -168,10 +168,7 @@ class _HomeViewState extends State<HomeView>
         });
       },
       tooltip: 'Add a new note',
-      child: const Icon(
-        Icons.add_box,
-        color: CustomColors.onPrimary,
-      ),
+      child: const Icon(Icons.add_box),
     );
   }
 }

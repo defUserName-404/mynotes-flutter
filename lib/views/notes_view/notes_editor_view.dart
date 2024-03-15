@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:mynotes/services/auth/auth_service.dart';
-import 'package:mynotes/services/cloud/cloud_storage_service.dart';
 import 'package:mynotes/services/crud/notes/note.dart';
+import 'package:mynotes/services/crud/notes/note_action.dart';
 import 'package:mynotes/util/constants/colors.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../services/cloud/cloud_note.dart';
 import '../../services/crud/notes/note_editing_mode.dart';
 import '../custom_widgets/dialogs.dart';
 import '../custom_widgets/icon.dart';
+import '../custom_widgets/menu_options.dart';
 import '../custom_widgets/textfield.dart';
 
 class NoteEditorView extends StatefulWidget {
@@ -22,17 +21,17 @@ class NoteEditorView extends StatefulWidget {
 
 class _NoteEditorViewState extends State<NoteEditorView> {
   CloudNote? _passedNote;
-  late final CloudStorageService _notesService;
   late TextEditingController _titleController;
   late TextEditingController _contentController;
   late bool _isFavorite;
   late Color _backgroundColor;
   late final NoteEditingMode _noteEditingMode;
+  late final NoteActionService _noteActionService;
 
   @override
   void initState() {
-    _notesService = CloudStorageService();
     _noteEditingMode = widget.noteEditingMode;
+    _noteActionService = NoteActionService();
     _titleController = TextEditingController();
     _contentController = TextEditingController();
     _isFavorite = false;
@@ -76,58 +75,96 @@ class _NoteEditorViewState extends State<NoteEditorView> {
 
   PreferredSizeWidget _appBar() {
     return AppBar(
-      leading: const BackButton(),
-      elevation: 10,
-      actions: [
-        if (_noteEditingMode == NoteEditingMode.existingNote) ...[
-          IconButton(
-              icon: const AppIcon(icon: Icons.delete),
-              onPressed: () async {
-                final shouldDeleteNote = await AppDialog.showConfirmationDialog(
-                    buildContext: context,
-                    title: 'Delete Note',
-                    content: 'Do you really want to delete this note?',
-                    confirmIcon: Icons.delete_rounded,
-                    cancelIcon: Icons.cancel);
-                if (shouldDeleteNote && mounted) {
-                  _deleteNote(noteId: _passedNote!.documentId);
-                  Navigator.pop(context);
-                }
-              }),
-        ],
-        IconButton(
-          icon: _isFavorite
-              ? const AppIcon(icon: Icons.favorite_rounded)
-              : const AppIcon(icon: Icons.favorite_outline_rounded),
-          onPressed: () {
-            setState(() {
-              _isFavorite = !_isFavorite;
-            });
-          },
-        ),
-        IconButton(
+        leading: BackButton(
+            color: CustomColors.primary,
             onPressed: () {
-              final text =
-                  '${_titleController.text}\n${_contentController.text}';
-              Share.share(text);
-            },
-            icon: const AppIcon(icon: Icons.share)),
-        IconButton(
-            onPressed: () {
-              final note = NoteDto(
-                  title: _titleController.text,
-                  content: _contentController.text,
-                  color: _backgroundColor,
-                  isFavorite: _isFavorite);
-              _noteEditingMode == NoteEditingMode.newNote
-                  ? _createNewNote(newNote: note)
-                  : _updateExistingNote(
-                      updatedNote: note, noteId: _passedNote!.documentId);
-              Navigator.pop(context);
-            },
-            icon: const AppIcon(icon: Icons.check))
-      ],
-    );
+              _onSaveOrBackButtonPressed();
+            }),
+        elevation: 10,
+        actions: menuOptions
+            .where((menuOption) =>
+                (menuOption['action'] as MenuItem) != MenuItem.delete ||
+                _noteEditingMode != NoteEditingMode.newNote)
+            .map((menuOption) => IconButton(
+                  onPressed: () {
+                    switch (menuOption['action'] as MenuItem) {
+                      case MenuItem.toggleFavorite:
+                        _onToggleFavoriteButtonPressed();
+                        break;
+                      case MenuItem.delete:
+                        _onDeleteButtonPressed();
+                        break;
+                      case MenuItem.share:
+                        _onShareButtonPressed();
+                        break;
+                      case MenuItem.save:
+                        _onSaveOrBackButtonPressed();
+                        break;
+                      default:
+                        break;
+                    }
+                  },
+                  icon: _setIconsForMenuItems(menuOption),
+                  tooltip: menuOption['text'] as String,
+                ))
+            .toList());
+  }
+
+  void _onToggleFavoriteButtonPressed() {
+    setState(() => _isFavorite =
+        _noteActionService.toggleFavoriteNote(isFavorite: _isFavorite));
+  }
+
+  void _onShareButtonPressed() {
+    final sharingNote = NoteDto(
+        title: _titleController.text,
+        content: _contentController.text,
+        color: _backgroundColor,
+        isFavorite: _isFavorite);
+    _noteActionService.shareNote(note: sharingNote);
+  }
+
+  void _onDeleteButtonPressed() async {
+    final shouldDeleteNote = await AppDialog.showConfirmationDialog(
+        buildContext: context,
+        title: 'Delete Note',
+        content: 'Do you really want to delete this note?',
+        confirmIcon: Icons.delete_rounded,
+        cancelIcon: Icons.cancel);
+    if (shouldDeleteNote && mounted) {
+      _noteActionService.deleteNote(noteId: _passedNote!.documentId);
+      Navigator.pop(context);
+    }
+  }
+
+  void _onSaveOrBackButtonPressed() {
+    final note = NoteDto(
+        title: _titleController.text,
+        content: _contentController.text,
+        color: _backgroundColor,
+        isFavorite: _isFavorite);
+    _noteActionService.saveNote(
+        note: note,
+        noteEditingMode: _noteEditingMode,
+        existingNote: _passedNote);
+    Navigator.pop(context);
+  }
+
+  Widget _setIconsForMenuItems(Map<String, dynamic> menuOption) {
+    return AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        switchInCurve: Curves.easeIn,
+        switchOutCurve: Curves.easeOut,
+        child: (menuOption['action'] as MenuItem) == MenuItem.toggleFavorite
+            ? AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                switchInCurve: Curves.easeIn,
+                switchOutCurve: Curves.easeOut,
+                child: _isFavorite
+                    ? const AppIcon(icon: Icons.favorite_rounded)
+                    : const AppIcon(icon: Icons.favorite_outline_rounded),
+              )
+            : AppIcon(icon: menuOption['icon'] as IconData));
   }
 
   Widget _body() {
@@ -180,19 +217,5 @@ class _NoteEditorViewState extends State<NoteEditorView> {
         ],
       ),
     );
-  }
-
-  void _createNewNote({required NoteDto newNote}) {
-    final currentUser = AppAuthService.firebase().currentUser!;
-    _notesService.createNewNote(ownerUserId: currentUser.id, note: newNote);
-  }
-
-  void _updateExistingNote(
-      {required NoteDto updatedNote, required String noteId}) {
-    _notesService.updateNote(note: updatedNote, documentId: noteId);
-  }
-
-  void _deleteNote({required String noteId}) {
-    _notesService.deleteNote(documentId: noteId);
   }
 }
