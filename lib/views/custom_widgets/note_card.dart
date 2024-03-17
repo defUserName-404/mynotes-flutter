@@ -70,10 +70,19 @@ class _NoteCardState extends State<NoteCard>
           scale: _scaleAnimation.value,
           child: GFCard(
               padding: const EdgeInsets.all(2.0),
+              margin: const EdgeInsets.all(8.0),
               color: _calculateColor(),
               elevation: 20,
+              shape: RoundedRectangleBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                  side: BorderSide(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? CustomColors.light
+                          : CustomColors.dark)),
+              semanticContainer: false,
               title: GFListTile(
-                padding: const EdgeInsets.all(2.0),
+                padding: const EdgeInsets.all(0.0),
+                margin: const EdgeInsets.all(4.0),
                 avatar: const Icon(
                   Icons.note,
                   color: CustomColors.onPrimary,
@@ -82,6 +91,7 @@ class _NoteCardState extends State<NoteCard>
                   widget.note.title,
                   textAlign: TextAlign.center,
                   maxLines: 1,
+                  softWrap: true,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold,
@@ -91,15 +101,17 @@ class _NoteCardState extends State<NoteCard>
               titlePosition: GFPosition.start,
               content: Container(
                 alignment: Alignment.topLeft,
-                margin: const EdgeInsets.all(2.0),
+                padding: const EdgeInsets.all(2.0),
+                margin: const EdgeInsets.all(4.0),
                 child: Text(
                   widget.note.content,
                   maxLines: 5,
                   overflow: TextOverflow.ellipsis,
+                  softWrap: true,
                   style: const TextStyle(color: CustomColors.light),
                 ),
               ),
-              clipBehavior: Clip.antiAlias),
+              clipBehavior: Clip.antiAliasWithSaveLayer),
         ),
       ),
     );
