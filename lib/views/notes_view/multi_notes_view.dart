@@ -41,11 +41,12 @@ class _MultiNotesViewState extends State<MultiNotesView> {
   }
 
   void _scheduleRebuild() {
+    final notesAmount = _dragSelectGridViewController.value.amount;
+    String titleText = '$notesAmount ';
+    titleText += notesAmount > 1 ? 'notes selected' : 'note selected';
     setState(() {
       _isSelecting = _dragSelectGridViewController.value.isSelecting;
-      _title = _isSelecting
-          ? '${_dragSelectGridViewController.value.amount} notes selected'
-          : null;
+      _title = _isSelecting ? titleText : null;
     });
   }
 
