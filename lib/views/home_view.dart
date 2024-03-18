@@ -54,7 +54,7 @@ class _HomeViewState extends State<HomeView>
     return SafeArea(
       child: Scaffold(
         appBar: _appBar(),
-        bottomSheet: _tabBar(),
+        bottomNavigationBar: _tabBar(),
         body: _body(),
         floatingActionButton: _fab(),
         floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
@@ -142,8 +142,7 @@ class _HomeViewState extends State<HomeView>
     );
   }
 
-  void _onTypingAndSearchButtonOrSubmitPressed(String searchText) {
-  }
+  void _onTypingAndSearchButtonOrSubmitPressed(String searchText) {}
 
   Widget _body() {
     return StreamBuilder(

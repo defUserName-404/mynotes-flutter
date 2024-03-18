@@ -6,6 +6,7 @@ class AppTextField extends StatelessWidget {
   final TextInputType keyboardType;
   final String hintText;
   final String labelText;
+  final TextStyle? textStyle;
   final String? errorText;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
@@ -25,6 +26,7 @@ class AppTextField extends StatelessWidget {
       this.keyboardType = TextInputType.text,
       required this.hintText,
       required this.labelText,
+      this.textStyle,
       this.errorText,
       this.prefixIcon,
       this.suffixIcon,
@@ -44,6 +46,7 @@ class AppTextField extends StatelessWidget {
         controller: controller,
         keyboardType: keyboardType,
         textAlignVertical: TextAlignVertical.top,
+        style: textStyle,
         focusNode: focusNode,
         decoration: InputDecoration(
           hintText: hintText,
@@ -56,8 +59,10 @@ class AppTextField extends StatelessWidget {
           focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(4.0),
               borderSide: const BorderSide(color: Colors.red, width: 3)),
-          labelStyle: const TextStyle(
-              fontWeight: FontWeight.bold, color: CustomColors.primary),
+          labelStyle: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: borderColor,
+              decoration: TextDecoration.underline),
           floatingLabelAlignment: FloatingLabelAlignment.center,
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(4.0),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mynotes/services/crud/notes/note.dart';
 import 'package:mynotes/services/crud/notes/note_action.dart';
 import 'package:mynotes/util/constants/colors.dart';
+import 'package:mynotes/util/theme/custom_theme/text_theme.dart';
 
 import '../../services/cloud/cloud_note.dart';
 import '../../services/crud/notes/note_editing_mode.dart';
@@ -168,54 +169,56 @@ class _NoteEditorViewState extends State<NoteEditorView> {
   }
 
   Widget _body() {
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: AppTextField(
-                  controller: _titleController,
-                  hintText: 'Title',
-                  borderColor: Theme.of(context).brightness == Brightness.dark
-                      ? CustomColors.dark
-                      : CustomColors.light,
-                  labelText: ''),
-            ),
-            Expanded(
-              child: AppTextField(
-                  controller: _contentController,
-                  hintText: 'Start typing your note here',
-                  borderColor: Theme.of(context).brightness == Brightness.dark
-                      ? CustomColors.dark
-                      : CustomColors.light,
-                  expands: true,
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  labelText: ''),
-            ),
-          ],
-        ));
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: AppTextField(
+              controller: _titleController,
+              hintText: 'Title',
+              textStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize:
+                      CustomTextTheme.lightTextTheme.headlineLarge!.fontSize),
+              borderColor: Theme.of(context).brightness == Brightness.dark
+                  ? CustomColors.dark
+                  : CustomColors.light,
+              labelText: 'Title'),
+        ),
+        Expanded(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: AppTextField(
+              controller: _contentController,
+              hintText: 'Start typing your note here...',
+              textStyle: TextStyle(
+                  fontSize:
+                      CustomTextTheme.lightTextTheme.titleLarge!.fontSize),
+              borderColor: Theme.of(context).brightness == Brightness.dark
+                  ? CustomColors.dark
+                  : CustomColors.light,
+              expands: true,
+              maxLines: null,
+              keyboardType: TextInputType.multiline,
+              labelText: 'Note'),
+        ))
+      ],
+    );
   }
 
   Widget _bottomNavBar() {
     return BottomAppBar(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          for (Color color in colorSwatchForNote)
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _backgroundColor = color;
-                });
-              },
+        child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        for (Color color in colorSwatchForNote) ...[
+          GestureDetector(
+              onTap: () => setState(() => _backgroundColor = color),
               child: CircleAvatar(
                 backgroundColor: color,
-              ),
-            ),
-        ],
-      ),
-    );
+              ))
+        ]
+      ],
+    ));
   }
 }
