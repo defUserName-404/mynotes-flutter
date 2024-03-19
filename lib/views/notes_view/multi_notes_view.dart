@@ -73,7 +73,7 @@ class _MultiNotesViewState extends State<MultiNotesView> {
                         _onToggleFavoriteButtonPressed();
                         break;
                       case MenuItem.delete:
-                        _onDeleteButtonPressed();
+                         _onDeleteButtonPressed();
                         break;
                       case MenuItem.share:
                         _onShareButtonPressed();

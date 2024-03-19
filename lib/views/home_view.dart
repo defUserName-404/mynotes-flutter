@@ -88,6 +88,8 @@ class _HomeViewState extends State<HomeView>
                   if (_isSearching) {
                     _searchController.text = '';
                     _searchFocusNode.unfocus();
+                  } else {
+                    _searchFocusNode.requestFocus();
                   }
                   setState(() {
                     _isSearching = !_isSearching;
@@ -106,6 +108,7 @@ class _HomeViewState extends State<HomeView>
                       icon:
                           const Icon(Icons.search, color: CustomColors.primary))
                   : null),
+          canRequestFocus: true,
           autofocus: false,
           focusNode: _searchFocusNode,
           onTap: () {
@@ -120,9 +123,7 @@ class _HomeViewState extends State<HomeView>
           },
           onSubmitted: (searchText) {
             _onTypingAndSearchButtonOrSubmitPressed(searchText);
-            setState(() {
-              _isSearching = false;
-            });
+            setState(() => _isSearching = false);
           }),
       actions: [
         Visibility(
